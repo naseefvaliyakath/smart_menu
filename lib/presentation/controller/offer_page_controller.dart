@@ -19,30 +19,21 @@ class OfferPageController extends GetxController {
   bool isLoading = false;
   bool isLoadingCategory = false;
 
-  int tappedIndex = 0;
 
-  //? to get by selected category
-  int selectedCategory = -1;
-
-  //? Category to show in UI
-  final List<Category> _myCategory = [];
-
-  List<Category> get myCategory => _myCategory;
 
   //? this will store all AllFood from the server
   //? not showing in UI or change
   final List<Food> _storedAllFoods = [];
 
   //? today food to show in UI
-  final List<Food> _myAllFoods = [];
-  List<Food> get myAllFoods => _myAllFoods;
+  final List<Food> _myAllOfferFoods = [];
+  List<Food> get myAllFoods => _myAllOfferFoods;
 
 
 
   @override
   void onInit() async {
-    getAllCategory();
-    getAllFood();
+    getAllOfferFood();
     super.onInit();
   }
 
@@ -51,53 +42,25 @@ class OfferPageController extends GetxController {
     super.onInit();
   }
 
-  getAllCategory() async {
-    try {
-      showLoadingCategoryLoading();
-      ApiResponse<List<Category>>? apiResponse = await categoryRepository.getAllCategories();
-      if (apiResponse != null) {
-        if (apiResponse.error) {
-          AppSnackBar.errorSnackBar('Error', apiResponse.message);
-          return false;
-        } else {
-          _myCategory.clear();
-          _myCategory.addAll(apiResponse.data ?? []);
-          //? setting initial category
-          if (_myCategory.isNotEmpty) {
-            selectedCategory = _myCategory.first.id ?? -1;
-          }
-          // AppSnackBar.successSnackBar('Success', apiResponse.message);
-          return true;
-        }
-      } else {
-        AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
-        return false;
-      }
-    } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
-    } finally {
-      hideLoadingCategoryLoading();
-      update();
-    }
-  }
 
-  getAllFood({bool showSnack = true}) async {
+
+  getAllOfferFood({bool showSnack = true}) async {
     try {
-      ApiResponse<List<Food>>? apiResponse = await foodRepository.getAllFood();
+      ApiResponse<List<Food>>? apiResponse = await foodRepository.getOfferFood();
       if (apiResponse != null) {
         if (apiResponse.error) {
           AppSnackBar.errorSnackBar('Error', apiResponse.message);
           return false;
         } else {
           _storedAllFoods.clear();
-          _myAllFoods.clear();
+          _myAllOfferFoods.clear();
           _storedAllFoods.addAll(apiResponse.data ?? []);
-          _myAllFoods.addAll(_storedAllFoods);
+          _myAllOfferFoods.addAll(_storedAllFoods);
           showSnack == true ? AppSnackBar.successSnackBar('Success', apiResponse.message) : null;
           return true;
         }
       } else {
-        AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+       //? AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
         return false;
       }
     } catch (e) {
@@ -136,41 +99,12 @@ class OfferPageController extends GetxController {
       // Categories from server
       filteredFoods = _storedAllFoods.where((food) => food.fdCategory == category).toList();
     }
-    _myAllFoods.clear();
-    _myAllFoods.addAll(filteredFoods);
+    _myAllOfferFoods.clear();
+    _myAllOfferFoods.addAll(filteredFoods);
     update();
   }
 
-  //? to change tapped category
-  setCategoryTappedIndex(int val, int catId) {
-    // Assigning different negative values to the selected category for local cards
-    if (val < 5) {
-      switch (val) {
-        case 0:
-          selectedCategory = -100;
-          break;
-        case 1:
-          selectedCategory = -200;
-          break;
-        case 2:
-          selectedCategory = -300;
-          break;
-        case 3:
-          selectedCategory = -400;
-          break;
-        case 4:
-          selectedCategory = -500;
-          break;
-      }
-    } else {
-      // Update selected category for fetched categories
-      selectedCategory = catId;
-    }
-    tappedIndex = val;
-    //? filtering food
-    filterFoods(selectedCategory);
-    update();
-  }
+
 
   showLoadingCategoryLoading() {
     isLoadingCategory = true;

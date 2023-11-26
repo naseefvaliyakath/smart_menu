@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:smart_menu/constants/url.dart';
 import 'package:smart_menu/presentation/controller/offer_page_controller.dart';
+import 'package:smart_menu/presentation/widget/common/common_text/mid_text.dart';
+import 'package:smart_menu/presentation/widget/common/common_text/small_text.dart';
 import '../../constants/colors/app_colors.dart';
 import '../controller/create_offer_controller.dart';
 import '../widget/common/buttons/round_border_button.dart';
@@ -39,7 +41,7 @@ class CreateOfferPage extends StatelessWidget {
                           width: double.maxFinite,
                           padding: EdgeInsets.symmetric(horizontal: 10.w),
                           child: Form(
-                            key: ctrl.foodFormKey,
+                            key: ctrl.offerFormKey,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -71,117 +73,132 @@ class CreateOfferPage extends StatelessWidget {
                                 ),
                                 15.verticalSpace,
                                 OfferFoodCard(
-                                  img: ctrl.food?.fdImg ?? IMG_LINK,
-                                  name: 'Burger with cream',
-                                  price: 100,
-                                  offerPrice: 50,
-                                  offerName: 'Buy one get 1',
-                                  priceThreeByTwo: 80,
-                                  priceHalf: 70,
-                                  priceQuarter: 60,
-                                  fdIsLoos: 'true',
-                                  offerPriceThreeByTwo: 10,
-                                  offerPriceHalf: 20,
-                                  offerPriceQuarter: 30,
+                                  img: ctrl.offerFood?.fdImg ?? IMG_LINK,
+                                  name: ctrl.offerFood?.fdName ?? 'Error',
+                                  price: ctrl.offerFood?.fdFullPrice ?? 0,
+                                  priceThreeByTwo:ctrl.offerFood?.fdThreeBiTwoPrsPrice ?? 0,
+                                  priceHalf: ctrl.offerFood?.fdHalfPrice ?? 0,
+                                  priceQuarter: ctrl.offerFood?.fdQtrPrice ?? 0,
+                                  fdIsLoos: ctrl.offerFood?.fdIsLoos ?? 'false',
+                                  offerPrice: ctrl.offerFood?.fdOffFullPrice ?? 0,
+                                  offerPriceThreeByTwo: ctrl.offerFood?.fdOffThreeByTwoPrice ?? 0,
+                                  offerPriceHalf:ctrl.offerFood?.fdOffHalfPrice ?? 0,
+                                  offerPriceQuarter: ctrl.offerFood?.fdOffQtrPrice ?? 0,
+                                  offerName: ctrl.offerFood?.offerName ?? 'No offer',
                                 ),
                                 20.verticalSpace,
                                 //? food name text-field
                                 BigText(
-                                  text: 'Food Name ',
+                                  text: 'Offer Name ',
                                   size: 14.sp,
                                   color: AppColors.mainColor_2,
                                 ),
                                 5.verticalSpace,
                                 TextFieldWidget(
-                                  hintText: 'Enter Your Food Name ....',
-                                  textEditingController: ctrl.fdNameTD,
+                                  hintText: 'Enter Your Offer Name ....',
+                                  textEditingController: ctrl.fdOffNameTD,
                                   requiredField: true,
                                   borderRadius: 15.r,
                                   txtLength: 35,
                                   onChange: (_) {},
                                 ),
                                 20.verticalSpace,
-                                //? food name text-field
-                                BigText(
-                                  text: 'Food Description ',
-                                  size: 14.sp,
-                                  color: AppColors.mainColor_2,
-                                ),
-                                5.verticalSpace,
-                                TextFieldWidget(
-                                  hintText: 'Enter Your Food Description ....',
-                                  textEditingController: ctrl.fdDescriptionTD,
-                                  borderRadius: 15.r,
-                                  txtLength: 35,
-                                  onChange: (_) {},
-                                ),
-
-                                20.verticalSpace,
                                 // price text-field
                                 Row(
                                   children: [
                                     BigText(
-                                      text: 'Food Price ',
+                                      text: 'Offer Price ',
                                       size: 14.sp,
                                       color: AppColors.mainColor_2,
                                     ),
                                   ],
                                 ),
                                 5.verticalSpace,
-                                TextFieldWidget(
-                                  isNumberOnly: true,
-                                  keyBordType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                                  hintText: 'Enter Your Food Price ....',
-                                  textEditingController: ctrl.fdPriceTD,
-                                  borderRadius: 15.r,
-                                  requiredField: true,
-                                  onChange: (_) {},
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: TextFieldWidget(
-                                        isNumberOnly: true,
-                                        keyBordType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                                        hintText: 'Full',
-                                        textEditingController: ctrl.fdFullPriceTD,
-                                        borderRadius: 15.r,
-                                        requiredField: true,
-                                        onChange: (_) {},
+                                (ctrl.offerFood?.fdIsLoos ?? 'false') == 'false'
+                                    ? Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        MidText(text: 'Original Price : ${ctrl.offerFood?.fdFullPrice}'),
+                                        TextFieldWidget(
+                                            isNumberOnly: true,
+                                            keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                                            hintText: 'Enter Your Offer Price ....',
+                                            textEditingController: ctrl.fdOffFullPriceTD,
+                                            borderRadius: 15.r,
+                                            requiredField: true,
+                                            onChange: (_) {},
+                                          ),
+                                      ],
+                                    )
+                                    : Row(
+                                        children: [
+                                          Expanded(
+                                            child: Column(
+                                              children: [
+                                                SmallText(text: 'OG Price : ${ctrl.offerFood?.fdFullPrice}'),
+                                                TextFieldWidget(
+                                                  isNumberOnly: true,
+                                                  keyboardType:
+                                                      const TextInputType.numberWithOptions(decimal: true, signed: true),
+                                                  hintText: 'Full',
+                                                  textEditingController: ctrl.fdOffFullPriceTD,
+                                                  borderRadius: 15.r,
+                                                  requiredField: true,
+                                                  onChange: (_) {},
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              children: [
+                                                SmallText(text: 'OG Price : ${ctrl.offerFood?.fdThreeBiTwoPrsPrice}'),
+                                                TextFieldWidget(
+                                                  isNumberOnly: true,
+                                                  keyboardType:
+                                                      const TextInputType.numberWithOptions(decimal: true, signed: true),
+                                                  hintText: '3/4',
+                                                  textEditingController: ctrl.fdOffThreeBiTwoPrsTD,
+                                                  borderRadius: 15.r,
+                                                  onChange: (_) {},
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              children: [
+                                                SmallText(text: 'OG Price : ${ctrl.offerFood?.fdHalfPrice}'),
+                                                TextFieldWidget(
+                                                  isNumberOnly: true,
+                                                  keyboardType:
+                                                      const TextInputType.numberWithOptions(decimal: true, signed: true),
+                                                  hintText: 'Half',
+                                                  textEditingController: ctrl.fdOffHalfPriceTD,
+                                                  borderRadius: 15.r,
+                                                  onChange: (_) {},
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              children: [
+                                                SmallText(text: 'OG Price : ${ctrl.offerFood?.fdQtrPrice}'),
+                                                TextFieldWidget(
+                                                  isNumberOnly: true,
+                                                  keyboardType:
+                                                      const TextInputType.numberWithOptions(decimal: true, signed: true),
+                                                  hintText: 'Quarter',
+                                                  textEditingController: ctrl.fdOffQtrPriceTD,
+                                                  borderRadius: 15.r,
+                                                  onChange: (_) {},
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: TextFieldWidget(
-                                        isNumberOnly: true,
-                                        keyBordType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                                        hintText: '3/4',
-                                        textEditingController: ctrl.fdThreeBiTwoPrsTD,
-                                        borderRadius: 15.r,
-                                        onChange: (_) {},
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: TextFieldWidget(
-                                        isNumberOnly: true,
-                                        keyBordType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                                        hintText: 'Half',
-                                        textEditingController: ctrl.fdHalfPriceTD,
-                                        borderRadius: 15.r,
-                                        onChange: (_) {},
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: TextFieldWidget(
-                                        isNumberOnly: true,
-                                        keyBordType: const TextInputType.numberWithOptions(decimal: true, signed: true),
-                                        hintText: 'Quarter',
-                                        textEditingController: ctrl.fdQtrPriceTD,
-                                        borderRadius: 15.r,
-                                        onChange: (_) {},
-                                      ),
-                                    ),
-                                  ],
-                                ),
                                 20.verticalSpace,
                                 //add food button
                                 Center(
@@ -196,7 +213,9 @@ class CreateOfferPage extends StatelessWidget {
                                             textColor: Colors.white,
                                             width: 0.9.sw,
                                             borderRadius: 20.r,
-                                            onTap: () async {},
+                                            onTap: () async {
+                                              ctrl.updateOffer();
+                                            },
                                           )),
                                 20.verticalSpace,
                               ],

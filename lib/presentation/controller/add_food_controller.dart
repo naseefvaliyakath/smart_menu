@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:smart_menu/core/routes/app_pages.dart';
 import 'package:smart_menu/domain/repository/network/contract/category_repository.dart';
+import 'package:smart_menu/presentation/controller/login_controller.dart';
 import 'package:smart_menu/presentation/widget/snack_bar.dart';
 import '../../constants/app_constant_names.dart';
 import '../../constants/url.dart';
@@ -32,6 +33,15 @@ class AddFoodController extends GetxController {
   late TextEditingController fdThreeBiTwoPrsTD;
   late TextEditingController fdHalfPriceTD;
   late TextEditingController fdQtrPriceTD;
+
+  //?focus Nodes
+   FocusNode nameFocusNode = FocusNode();
+   FocusNode descriptionFocusNode= FocusNode();
+   FocusNode priceFocusNode= FocusNode();
+   FocusNode fullPriceFocusNode= FocusNode();
+   FocusNode threeBiTwoPrsFocusNode= FocusNode();
+   FocusNode halfPriceFocusNode= FocusNode();
+   FocusNode qtrPriceFocusNode= FocusNode();
 
   //? category name controller for adding new category
   late TextEditingController categoryNameTD;
@@ -120,7 +130,7 @@ class AddFoodController extends GetxController {
         }
         Food food = Food(
           isUpdate ? (foodToUpdate?.id ?? 0) : 0,
-          MY_SHOP_ID,
+          Get.find<LoginController>().myShop.shopId,
           fdNameTD.text,
           fdDescriptionTD.text,
           selectedCategory,
@@ -128,6 +138,11 @@ class AddFoodController extends GetxController {
           fdThreeBiTwoPrsTD.text.isEmpty ? 0 : (double.tryParse(fdThreeBiTwoPrsTD.text) ?? 0),
           fdHalfPriceTD.text.isEmpty ? 0 : (double.tryParse(fdHalfPriceTD.text) ?? 0),
           fdQtrPriceTD.text.isEmpty ? 0 : (double.tryParse(fdQtrPriceTD.text) ?? 0),
+          0, //? offer price set in server side
+          0, //? offer price set in server side
+          0, //? offer price set in server side
+          0, //? offer price set in server side
+          'No Offer',  //? offer name will set when offer creating
           priceToggle.toString(),
           0,
           isUpdate ? (galleryImgLink ?? (foodToUpdate?.fdImg ?? IMG_LINK)) : galleryImgLink,
@@ -144,10 +159,9 @@ class AddFoodController extends GetxController {
         if (!isUpdate) {
           //? add new food
           apiResponse = await foodRepository.addFood(food, file);
+
         } else {
           //? update food
-          bool imgFromGallery = (foodToUpdate?.fdImg ?? '').contains('food_gallery');
-          //? if img of food from gallery then making file is null
           apiResponse = await foodRepository.updateFood(food, file);
         }
         if (apiResponse != null) {
@@ -179,17 +193,21 @@ class AddFoodController extends GetxController {
   }
 
   setFoodDetailsIfUpdate(Food? food) async {
-    if (food != null) {
-      loadImage(foodToUpdate?.fdImg);
-      priceToggle = bool.parse(food.fdIsLoos ?? 'false');
-      fdNameTD.text = food.fdName ?? 'Error';
-      fdDescriptionTD.text = food.foodDescription ?? 'Error';
-      fdPriceTD.text = food.fdFullPrice.toString();
-      fdFullPriceTD.text = food.fdFullPrice.toString();
-      fdThreeBiTwoPrsTD.text = food.fdThreeBiTwoPrsPrice.toString();
-      fdHalfPriceTD.text = food.fdHalfPrice.toString();
-      fdQtrPriceTD.text = food.fdQtrPrice.toString();
-      update();
+    try {
+      if (food != null) {
+            loadImage(foodToUpdate?.fdImg);
+            priceToggle = bool.parse(food.fdIsLoos ?? 'false');
+            fdNameTD.text = food.fdName ?? 'Error';
+            fdDescriptionTD.text = food.foodDescription ?? 'Error';
+            fdPriceTD.text = food.fdFullPrice.toString();
+            fdFullPriceTD.text = food.fdFullPrice.toString();
+            fdThreeBiTwoPrsTD.text = food.fdThreeBiTwoPrsPrice.toString();
+            fdHalfPriceTD.text = food.fdHalfPrice.toString();
+            fdQtrPriceTD.text = food.fdQtrPrice.toString();
+            update();
+          }
+    } catch (e) {
+      AppSnackBar.errorSnackBar('Error', e.toString());
     }
   }
 
@@ -216,7 +234,7 @@ class AddFoodController extends GetxController {
         Category category = Category(
           0,
           categoryNameTD.text,
-          MY_SHOP_ID,
+          Get.find<LoginController>().myShop.shopId,
           DateTime.now().toString(),
           DateTime.now().toString(),
         );
@@ -233,7 +251,7 @@ class AddFoodController extends GetxController {
             return true;
           }
         } else {
-          AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+        //?  AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
           return false;
         }
       } else {
@@ -298,11 +316,10 @@ class AddFoodController extends GetxController {
           return true;
         }
       } else {
-        AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+       //? AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
         return false;
       }
     } catch (e) {
-      print(e.toString());
       rethrow;
       AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
     } finally {
@@ -311,26 +328,8 @@ class AddFoodController extends GetxController {
     }
   }
 
-  //? get category by Id
-  Future<Category?> getCategoryById({required int catId}) async {
-    try {
-      ApiResponse<Category>? apiResponse = await categoryRepository.getCategoryById(catId);
-      if (apiResponse != null) {
-        if (apiResponse.error) {
-          return null;
-        } else {
-          return apiResponse.data;
-        }
-      } else {
-        return null;
-      }
-    } catch (e) {
-      print(e.toString());
-      return null;
-    }
-  }
 
-  //////! category section !//////
+
 
   //? updating the price toggle when toggle btn click
   setPriceToggle(bool val) {

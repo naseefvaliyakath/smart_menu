@@ -14,7 +14,6 @@ import '../../presentation/controller/home_controller.dart';
 class HomeBinding extends Bindings {
   @override
   void dependencies() {
-    Get.put<DioClient>(DioClient(), permanent: true);
     Get.put<FoodGalleryRepository>(FoodGalleryRepositoryImpl(Get.find()), permanent: true);
     Get.put<FoodRepository>(FoodRepositoryImpl(Get.find()), permanent: true);
     Get.put<CategoryRepository>(CategoryRepositoryImpl(Get.find()), permanent: true);

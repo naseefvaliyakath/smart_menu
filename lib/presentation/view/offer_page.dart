@@ -22,126 +22,54 @@ class OfferPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GetBuilder<OfferPageController>(builder: (ctrl) {
-        return RefreshIndicator(
-          onRefresh: () async {
-            //? to vibrate
-            HapticFeedback.mediumImpact();
-            ctrl.getAllCategory();
-            ctrl.getAllFood();
-          },
-          child: ctrl.isLoading
-              ? const MyLoading()
-              : SafeArea(
-                  child: CustomScrollView(
-                    physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
-                    primary: false,
-                    slivers: <Widget>[
-                      SliverAppBar(
-                        floating: true,
-                        pinned: true,
-                        snap: true,
-                        title: const Text(
-                          'MANAGE OFFER',
-                          overflow: TextOverflow.fade,
-                          softWrap: false,
-                        ),
-                        titleTextStyle: TextStyle(fontSize: 26.sp, color: Colors.black, fontWeight: FontWeight.w600),
-                        actions: [
-                          IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                Icons.settings,
-                                size: 24.sp,
-                              )),
-                        ],
-                        leading: BackButton(
-                          onPressed: () {
-                            Get.back();
-                          },
-                        ),
-                        //? search bar and sort icon
+      body: GetBuilder<OfferPageController>(
+        builder: (ctrl) {
+          return RefreshIndicator(
+            onRefresh: () async {
+              HapticFeedback.mediumImpact();
+              ctrl.getAllOfferFood();
+            },
+            child: ctrl.isLoading
+                ? const MyLoading()
+                : SafeArea(
+                    child: CustomScrollView(
+                      physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+                      slivers: <Widget>[
+                        SliverAppBar(
+                          floating: true,
+                          pinned: true,
+                          snap: true,
+                          title: const Text(
+                            'MANAGE OFFER',
+                            overflow: TextOverflow.fade,
+                            softWrap: false,
+                          ),
+                          titleTextStyle: TextStyle(fontSize: 26.sp, color: Colors.black, fontWeight: FontWeight.w600),
+                          actions: [
+                            IconButton(
+                                onPressed: () {},
+                                icon: Icon(
+                                  Icons.settings,
+                                  size: 24.sp,
+                                )),
+                          ],
+                          leading: BackButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                          ),
 
-                        bottom: PreferredSize(
-                          preferredSize: Size.fromHeight(60.h),
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10.0.w, right: 10.w),
-                            child: SizedBox(
-                              height: 60.h,
-                              child: ctrl.isLoadingCategory == true
-                                  ? const ShimmingEffect()
-                                  : ListView.builder(
-                                      physics: const BouncingScrollPhysics(),
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: ctrl.myCategory.length + 5,
-                                      itemBuilder: (BuildContext ctx, index) {
-                                        if (index < 5) {
-                                          // Local categories
-                                          String text = '';
-                                          switch (index) {
-                                            case 0:
-                                              text = "All";
-                                              break;
-                                            case 1:
-                                              text = "Special";
-                                              break;
-                                            case 2:
-                                              text = "Available";
-                                              break;
-                                            case 3:
-                                              text = "Quick";
-                                              break;
-                                            case 4:
-                                              text = "Offer";
-                                              break;
-                                          }
-                                          return CategoryCard(
-                                            onTap: () {
-                                              ctrl.setCategoryTappedIndex(
-                                                  index, -1); // Pass -1 as id for local categories
-                                            },
-                                            color: ctrl.tappedIndex == index ? AppColors.mainColor_2 : Colors.white,
-                                            text: text,
-                                            onLongTap: () async {},
-                                            indexForColour: index,
-                                          );
-                                        } else {
-                                          // Fetched categories
-                                          final categoryIndex = index - 5; // Adjust index for fetched categories
-                                          return CategoryCard(
-                                            onTap: () {
-                                              ctrl.setCategoryTappedIndex(
-                                                  index, ctrl.myCategory[categoryIndex].id ?? -1);
-                                            },
-                                            color: ctrl.tappedIndex == index ? AppColors.mainColor_2 : Colors.white,
-                                            text: ctrl.myCategory[categoryIndex].name ?? COMMON_CATEGORY,
-                                            onLongTap: () async {},
-                                          );
-                                        }
-                                      },
-                                    ),
-                            ),
-                          ),
+                          backgroundColor: const Color(0xfffafafa),
                         ),
-                        backgroundColor: const Color(0xfffafafa),
-                      ),
-                      //? body section
-                      SliverPadding(
-                        padding: EdgeInsets.all(0.sp),
-                        sliver: SliverGrid(
-                          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: MediaQuery.of(context).size.width, // changes made here
-                            mainAxisSpacing: 0.sp,
-                            crossAxisSpacing: 5.sp,
-                            childAspectRatio: 1 / 1,
-                          ),
+                        // Replace SliverGrid with SliverList
+                        SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
                               return InkWell(
                                 onTap: () {
                                   FlexibleBtnBottomSheet.bottomSheet(
-                                    b1Name:  'Edit Offer',
-                                    b2Name:  'Remove Offer',
+                                    b1Name: 'Edit Offer',
+                                    b2Name: 'Remove Offer',
                                     b3Name: 'Close',
                                     b1Function: () {
                                       Navigator.pop(context);
@@ -161,29 +89,29 @@ class OfferPage extends StatelessWidget {
                                 onLongPress: () {},
                                 child: OfferFoodCard(
                                   img: ctrl.myAllFoods[index].fdImg ?? IMG_LINK,
-                                  name: 'Burger with cream',
-                                  price: 100,
-                                  offerPrice: 50,
-                                  offerName: 'Buy one get 1',
-                                  priceThreeByTwo: 80,
-                                  priceHalf: 70,
-                                  priceQuarter: 60,
-                                  fdIsLoos: 'true',
-                                  offerPriceThreeByTwo: 10,
-                                  offerPriceHalf: 20,
-                                  offerPriceQuarter: 30,
+                                  name: ctrl.myAllFoods[index].fdName ?? 'Error',
+                                  price: ctrl.myAllFoods[index].fdFullPrice ?? 0,
+                                  priceThreeByTwo: ctrl.myAllFoods[index].fdThreeBiTwoPrsPrice ?? 0,
+                                  priceHalf: ctrl.myAllFoods[index].fdHalfPrice ?? 0,
+                                  priceQuarter: ctrl.myAllFoods[index].fdQtrPrice ?? 0,
+                                  fdIsLoos: ctrl.myAllFoods[index].fdIsLoos ?? 'false',
+                                  offerPrice: ctrl.myAllFoods[index].fdOffFullPrice ?? 0,
+                                  offerPriceThreeByTwo: ctrl.myAllFoods[index].fdOffThreeByTwoPrice ?? 0,
+                                  offerPriceHalf: ctrl.myAllFoods[index].fdOffHalfPrice ?? 0,
+                                  offerPriceQuarter: ctrl.myAllFoods[index].fdOffQtrPrice ?? 0,
+                                  offerName: ctrl.myAllFoods[index].offerName ?? 'No offer',
                                 ),
                               );
                             },
                             childCount: ctrl.myAllFoods.length,
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-        );
-      }),
+          );
+        },
+      ),
     );
   }
 }

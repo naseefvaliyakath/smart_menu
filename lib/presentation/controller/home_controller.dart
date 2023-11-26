@@ -42,15 +42,15 @@ class HomeController extends GetxController {
           _storedFoodGalleryFoods.clear();
           _storedFoodGalleryFoods.addAll(apiResponse.data ?? []);
           if (foodGalleryCategory.isNotEmpty) {
-            filterFoodGalleryByCategory(foodGalleryCategory.first.name ?? '');
+            filterFoodGalleryByCategory(foodGalleryCategory.first.id ?? 0);
           } else {
-            filterFoodGalleryByCategory('');
+            filterFoodGalleryByCategory(0);
           }
           showSnack == true ? AppSnackBar.successSnackBar('Success', apiResponse.message) : null;
           return true;
         }
       } else {
-        AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+       //? AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
         return false;
       }
     } catch (e) {
@@ -60,10 +60,10 @@ class HomeController extends GetxController {
     }
   }
 
-  void filterFoodGalleryByCategory(String category) {
-    // Filter the _storedFoodGalleryFoods list for items where the category matches the given category
-    List<FoodGalleryItem> filteredList = _storedFoodGalleryFoods.where((item) => item.category == category).toList();
-    // Assign the filtered list to foodGalleryFoods
+  void filterFoodGalleryByCategory(int category) {
+    //? Filter the _storedFoodGalleryFoods list for items where the category matches the given category
+    List<FoodGalleryItem> filteredList = _storedFoodGalleryFoods.where((item) => item.fdGallCatId == category).toList();
+    //? Assign the filtered list to foodGalleryFoods
     foodGalleryFoods.clear();
     foodGalleryFoods.addAll(filteredList);
     update();
@@ -83,7 +83,7 @@ class HomeController extends GetxController {
           return true;
         }
       } else {
-        AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+        //? AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
         return false;
       }
     } catch (e) {
@@ -92,4 +92,6 @@ class HomeController extends GetxController {
       update();
     }
   }
+
+
 }

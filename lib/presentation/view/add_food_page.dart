@@ -164,6 +164,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                               : CrossFadeState.showSecond;
                                                         },
                                                         nameController: ctrl.categoryNameTD,
+
                                                         height: 60.h,
                                                       ),
                                                 duration: const Duration(seconds: 1),
@@ -229,8 +230,12 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                   hintText: 'Enter Your Food Name ....',
                                   textEditingController: ctrl.fdNameTD,
                                   requiredField: true,
+                                  focusNode: ctrl.nameFocusNode,
                                   borderRadius: 15.r,
                                   txtLength: 35,
+                                  onSubmit: (_) {
+                                    FocusScope.of(context).requestFocus(ctrl.descriptionFocusNode);
+                                  },
                                   onChange: (_) {},
                                 ),
                                 20.verticalSpace,
@@ -244,8 +249,12 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                 TextFieldWidget(
                                   hintText: 'Enter Your Food Description ....',
                                   textEditingController: ctrl.fdDescriptionTD,
+                                  focusNode: ctrl.descriptionFocusNode,
                                   borderRadius: 15.r,
                                   txtLength: 35,
+                                  onSubmit: (_) {
+                                    FocusScope.of(context).requestFocus(ctrl.priceFocusNode);
+                                  },
                                   onChange: (_) {},
                                 ),
 
@@ -274,11 +283,12 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                 AnimatedCrossFade(
                                   firstChild: TextFieldWidget(
                                     isNumberOnly: true,
-                                    keyBordType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                                    keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
                                     hintText: 'Enter Your Food Price ....',
                                     txtLength: 8,
                                     textEditingController: ctrl.fdPriceTD,
                                     borderRadius: 15.r,
+                                    focusNode: ctrl.priceFocusNode,
                                     requiredField: !ctrl.priceToggle,
                                     onChange: (_) {},
                                   ),
@@ -287,24 +297,32 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                       Expanded(
                                         child: TextFieldWidget(
                                           isNumberOnly: true,
-                                          keyBordType:
+                                          keyboardType:
                                               const TextInputType.numberWithOptions(decimal: true, signed: true),
                                           hintText: 'Full',
                                           txtLength: 8,
                                           textEditingController: ctrl.fdFullPriceTD,
+                                          focusNode: ctrl.fullPriceFocusNode,
                                           borderRadius: 15.r,
                                           requiredField: ctrl.priceToggle,
+                                          onSubmit: (_) {
+                                            FocusScope.of(context).requestFocus(ctrl.threeBiTwoPrsFocusNode);
+                                          },
                                           onChange: (_) {},
                                         ),
                                       ),
                                       Expanded(
                                         child: TextFieldWidget(
                                           isNumberOnly: true,
-                                          keyBordType:
+                                          keyboardType:
                                               const TextInputType.numberWithOptions(decimal: true, signed: true),
                                           hintText: '3/4',
                                           txtLength: 8,
                                           textEditingController: ctrl.fdThreeBiTwoPrsTD,
+                                          focusNode: ctrl.threeBiTwoPrsFocusNode,
+                                          onSubmit: (_) {
+                                            FocusScope.of(context).requestFocus(ctrl.halfPriceFocusNode);
+                                          },
                                           borderRadius: 15.r,
                                           onChange: (_) {},
                                         ),
@@ -312,23 +330,28 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                       Expanded(
                                         child: TextFieldWidget(
                                           isNumberOnly: true,
-                                          keyBordType:
+                                          keyboardType:
                                               const TextInputType.numberWithOptions(decimal: true, signed: true),
                                           hintText: 'Half',
                                           txtLength: 8,
                                           textEditingController: ctrl.fdHalfPriceTD,
                                           borderRadius: 15.r,
+                                          focusNode: ctrl.halfPriceFocusNode,
+                                          onSubmit: (_) {
+                                            FocusScope.of(context).requestFocus(ctrl.qtrPriceFocusNode);
+                                          },
                                           onChange: (_) {},
                                         ),
                                       ),
                                       Expanded(
                                         child: TextFieldWidget(
                                           isNumberOnly: true,
-                                          keyBordType:
+                                          keyboardType:
                                               const TextInputType.numberWithOptions(decimal: true, signed: true),
                                           hintText: 'Quarter',
                                           txtLength: 8,
                                           textEditingController: ctrl.fdQtrPriceTD,
+                                          focusNode: ctrl.qtrPriceFocusNode,
                                           borderRadius: 15.r,
                                           onChange: (_) {},
                                         ),
@@ -383,14 +406,14 @@ class _AddFoodPageState extends State<AddFoodPage> {
   }
 
   void _getFromGallery() async {
-    XFile? pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: 1080, maxHeight: 1080);
+    XFile? pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: 1080, maxHeight: 1080,imageQuality: 10);
     _cropImage(pickedFile!.path);
     Navigator.pop(context);
   }
 
   void _getFromCamara() async {
     XFile? pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 1080, maxHeight: 1080, imageQuality: 30);
+        await ImagePicker().pickImage(source: ImageSource.camera, maxWidth: 1080, maxHeight: 1080, imageQuality: 10);
     if (pickedFile != null) {
       _cropImage(pickedFile.path);
     }

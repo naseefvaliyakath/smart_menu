@@ -134,7 +134,7 @@ class FoodMenuPage extends StatelessWidget {
                             maxCrossAxisExtent: 200.0.sp,
                             mainAxisSpacing: 18.sp,
                             crossAxisSpacing: 18.sp,
-                            childAspectRatio: 2 / 2.8,
+                            childAspectRatio: 2 / 2.5,
                           ),
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
@@ -153,10 +153,9 @@ class FoodMenuPage extends StatelessWidget {
                                     b4Name: ctrl.myAllFoods[index].fdIsQuick == 'false'
                                         ? 'Add To Quick'
                                         : 'Remove From Quick',
-                                    b5Name: ctrl.myAllFoods[index].offer == 'false'
-                                        ? 'Set Offer'
-                                        : 'Remove Offer',
+                                    b5Name: ctrl.myAllFoods[index].offer == 'false' ? 'Set Offer' : 'Remove Offer',
                                     b6Name: 'Edit Food',
+                                    b7Name: 'Delete Food',
                                     b1Function: () {
                                       ctrl.updateSelectedField(ctrl.myAllFoods[index], field: 'today');
                                       Navigator.pop(context);
@@ -174,11 +173,7 @@ class FoodMenuPage extends StatelessWidget {
                                       Navigator.pop(context);
                                     },
                                     b5Function: () {
-                                      Navigator.pop(context);
-                                      Get.toNamed(
-                                        AppPages.CREATEOFFER_PAGE,
-                                        arguments: {'food': ctrl.myAllFoods[index]},
-                                      );
+                                      ctrl.setAndRemoveOffer(ctrl.myAllFoods[index]);
                                     },
                                     b6Function: () {
                                       Navigator.pop(context);
@@ -188,6 +183,11 @@ class FoodMenuPage extends StatelessWidget {
                                           'food': ctrl.myAllFoods[index],
                                         },
                                       );
+                                    },
+                                    b7Function: () async {
+                                      Navigator.pop(context);
+                                      ctrl.deleteFood(
+                                          ctrl.myAllFoods[index].id ?? 0, ctrl.myAllFoods[index].fdImg ?? '');
                                     },
                                   );
                                 },

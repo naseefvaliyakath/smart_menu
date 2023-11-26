@@ -33,7 +33,7 @@ class OfferFoodCard extends StatelessWidget {
     required this.fdIsLoos
   }) : super(key: key);
 
-  Widget _buildPrice(String label, double originalPrice, double offerPrice) {
+  Widget _buildPrice(String label, double originalPrice, double offerPrice,{bool isLoos = false}) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 2.h),
       child: Row(
@@ -42,7 +42,7 @@ class OfferFoodCard extends StatelessWidget {
           Text(
             '$label : ',
             style: TextStyle(
-              fontSize: 18.sp,
+              fontSize: isLoos ? 22.sp :18.sp,
               color: AppColors.mainColor_2,
               fontWeight: FontWeight.bold,
             ),
@@ -50,7 +50,7 @@ class OfferFoodCard extends StatelessWidget {
           Text(
             '${originalPrice.toStringAsFixed(2)}  ',
             style: TextStyle(
-              fontSize: 16.sp,
+              fontSize: isLoos ? 20.sp : 16.sp,
               color: Colors.grey,
               decoration: offerPrice < originalPrice ? TextDecoration.lineThrough : null,
             ),
@@ -73,6 +73,7 @@ class OfferFoodCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      surfaceTintColor: Colors.white,
       margin: EdgeInsets.all(10.w),
       elevation: 5,
       shape: RoundedRectangleBorder(
@@ -130,13 +131,13 @@ class OfferFoodCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  _buildPrice('Full', price, offerPrice),
+                  _buildPrice( fdIsLoos == 'false' ? 'Price' : 'Full', price, offerPrice,isLoos: true),
                   if (fdIsLoos == 'true') ...[
                     _buildPrice('3 by 4', priceThreeByTwo, offerPriceThreeByTwo),
                     _buildPrice('Half', priceHalf, offerPriceHalf),
                     _buildPrice('Quarter', priceQuarter, offerPriceQuarter),
                   ],
-                  5.verticalSpace,
+                  15.verticalSpace,
                 ],
               ),
             ),

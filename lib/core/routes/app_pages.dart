@@ -7,6 +7,7 @@ import 'package:smart_menu/presentation/view/offer_page.dart';
 import '../../presentation/view/food_menu_page.dart';
 import '../../presentation/view/home_page.dart';
 import '../../presentation/view/login_screen.dart';
+import '../../presentation/view/qr_code_screen.dart';
 import '../binding/add_food_binding.dart';
 import '../binding/food_menu_binding.dart';
 import '../binding/home_binding.dart';
@@ -19,6 +20,7 @@ class AppPages {
   static const ADD_FOOD_PAGE = '/add-food-page';
   static const OFFER_PAGE = '/offer-page';
   static const CREATEOFFER_PAGE = '/create-offer-page';
+  static const QR_CODE_PAGE = '/qr-code-page';
 
   static final routes = [
     GetPage(
@@ -54,6 +56,12 @@ class AppPages {
         name: CREATEOFFER_PAGE,
         page: () {
           return const CreateOfferPage();
+        },
+        binding: CreateOfferPageBinding()),
+    GetPage(
+        name: QR_CODE_PAGE,
+        page: () {
+          return  QRCodeTableStand();
         },
         binding: CreateOfferPageBinding()),
   ];

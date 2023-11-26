@@ -1,43 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../../../constants/colors/app_colors.dart';
+import 'package:get/get.dart';
 
 class TextFieldWidget extends StatelessWidget {
   final TextEditingController textEditingController;
   final String hintText;
   final String? label;
-  final int maxLIne;
+  final FocusNode? focusNode;
+  final int maxLine;
   final double borderRadius;
   final double? width;
   final double? hintSize;
   final bool readonly;
-  final Function onChange;
-  final bool? isDens;
+  final Function(String) onChange;
   final bool autoFocus;
-  final TextInputType keyBordType;
+  final TextInputType keyboardType;
   final bool isNumberOnly;
   final int txtLength;
   final String? Function(String?)? validator;
   final bool requiredField;
   final VoidCallback? onTap;
+  final String? Function(String?)? onSubmit;
   final IconData? suffixIcon;
   final VoidCallback? onIconTap;
+  final bool useEmailValidator;
+  final bool usePhoneValidator;
 
   const TextFieldWidget({
     Key? key,
     required this.textEditingController,
     required this.hintText,
     this.label,
-    this.maxLIne = 1,
+    this.maxLine = 1,
     this.readonly = false,
     required this.borderRadius,
-    this.isDens = false,
     this.width,
     this.hintSize,
     this.autoFocus = false,
-    this.keyBordType = TextInputType.text,
+    this.keyboardType = TextInputType.text,
     required this.onChange,
     this.isNumberOnly = false,
     this.txtLength = 50,
@@ -46,56 +47,58 @@ class TextFieldWidget extends StatelessWidget {
     this.onTap,
     this.suffixIcon,
     this.onIconTap,
+    this.useEmailValidator = false,
+    this.usePhoneValidator = false,
+    this.onSubmit, this.focusNode,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool horizontal = 1.sh < 1.sw ? true : false;
     return SizedBox(
       width: width ?? double.maxFinite,
       child: TextFormField(
-        keyboardType: keyBordType,
+        keyboardType: keyboardType,
         controller: textEditingController,
-        maxLines: maxLIne,
+        maxLines: maxLine,
         onTap: onTap,
         readOnly: readonly,
+        enabled: !readonly,
         autofocus: autoFocus,
+        onChanged: onChange,
+        focusNode: focusNode,
         validator: (value) {
           if (requiredField && (value == null || value.isEmpty)) {
             return 'This field is required';
           }
-          if (value != null && value.isNotEmpty && isNumberOnly && double.tryParse(value) == null) {
-            return 'Please enter a valid number';
+          if (useEmailValidator) {
+            return validateEmail(value);
           }
-          if (validator != null) {
-            return validator!(value);
+          if (usePhoneValidator) {
+            return validatePhone(value);
           }
-          return null;
         },
-        onChanged: (value) {
-          onChange(value);
-        },
+        onFieldSubmitted: onSubmit,
         decoration: InputDecoration(
           hintText: hintText,
           labelText: label,
           suffixIcon: suffixIcon != null
               ? IconButton(
-            icon: Icon(suffixIcon),
-            onPressed: onIconTap,
-          )
+                  icon: Icon(suffixIcon),
+                  onPressed: onIconTap,
+                )
               : null,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           labelStyle: TextStyle(
-            color: AppColors.textGrey,
-            fontSize: hintSize ?? (horizontal ? 7.w : 14.w),
+            color: Colors.grey, // Replace with your color
+            fontSize: hintSize ?? (1.sh < 1.sw ? 7.w : 14.w),
           ),
           hintStyle: TextStyle(
-            color: AppColors.textGrey,
-            fontSize: hintSize ?? (horizontal ? 7.w : 15.w),
+            color: Colors.grey, // Replace with your color
+            fontSize: hintSize ?? (1.sh < 1.sw ? 7.w : 15.w),
           ),
           filled: true,
-          isDense: isDens,
-          fillColor: AppColors.textHolder,
+          fillColor: Colors.grey[200],
+          // Replace with your color
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(borderRadius),
             borderSide: BorderSide(color: Colors.white, width: 1.sp),
@@ -105,10 +108,31 @@ class TextFieldWidget extends StatelessWidget {
             borderSide: BorderSide(color: Colors.white, width: 1.sp),
           ),
         ),
-        inputFormatters: !isNumberOnly
-            ? [LengthLimitingTextInputFormatter(txtLength)]
-            : [FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*')), LengthLimitingTextInputFormatter(txtLength)],
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(txtLength),
+          if (isNumberOnly) FilteringTextInputFormatter.allow(RegExp(r'^-?\d*\.?\d*')),
+        ],
       ),
     );
+  }
+
+  String? validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Email cannot be empty';
+    }
+    if (!GetUtils.isEmail(value)) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  }
+
+  String? validatePhone(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Phone number cannot be empty';
+    }
+    if (!GetUtils.isPhoneNumber(value)) {
+      return 'Please enter a valid phone number';
+    }
+    return null;
   }
 }

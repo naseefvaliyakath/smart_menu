@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
 import 'package:smart_menu/constants/dummy_models.dart';
+import 'package:smart_menu/presentation/controller/login_controller.dart';
+import '../../constants/app_constant_names.dart';
 import '../../core/routes/app_pages.dart';
 import '../widget/common/app_drawer.dart';
 import '../widget/common/common_text/heading_rich_text.dart';
@@ -54,14 +57,23 @@ class HomePage extends StatelessWidget {
                         title: dashboardTitle[index],
                         subTitle: dashboardSubTitle[index],
                         imagePath: 'assets/image/${dashboardImg[index]}',
-                        onTap: () {
+                        onTap: () async {
                           //? food menu
                           if (index == 0) {
                             Get.toNamed(AppPages.FOOD_MENU_PAGE);
                           } else if (index == 1) {
                             Get.toNamed(AppPages.ADD_FOOD_PAGE);
-                          }else if (index == 3) {
+                          } else if (index == 2) {
+                            Get.toNamed(AppPages.QR_CODE_PAGE);
+                          } else if (index == 3) {
                             Get.toNamed(AppPages.OFFER_PAGE);
+                          } else if (index == 4) {
+                            const storage = FlutterSecureStorage();
+                            storage.delete(key: KEY_TOKEN);
+                          } else if (index == 5) {
+                            const storage = FlutterSecureStorage();
+                            String? aa = await storage.read(key: KEY_TOKEN);
+                            print(aa);
                           }
                         },
                       );

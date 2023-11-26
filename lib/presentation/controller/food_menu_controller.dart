@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:smart_menu/data/model/food/food.dart';
-
+import '../../core/routes/app_pages.dart';
 import '../../data/model/api_response/api_response.dart';
 import '../../data/model/category/category.dart';
 import '../../domain/repository/network/contract/category_repository.dart';
@@ -36,8 +37,8 @@ class FoodMenuController extends GetxController {
 
   @override
   void onInit() async {
-    getAllCategory();
-    getAllFood();
+    await getAllCategory();
+    await getAllFood();
     super.onInit();
   }
 
@@ -65,11 +66,11 @@ class FoodMenuController extends GetxController {
           return true;
         }
       } else {
-        AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+       //? AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
         return false;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+      AppSnackBar.errorSnackBar('Error', e.toString());
     } finally {
       hideLoadingCategoryLoading();
       update();
@@ -93,11 +94,11 @@ class FoodMenuController extends GetxController {
           return true;
         }
       } else {
-        AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+      //?  AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
         return false;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+      AppSnackBar.errorSnackBar('Error', e.toString());
     } finally {
       update();
     }
@@ -105,18 +106,17 @@ class FoodMenuController extends GetxController {
 
   updateSelectedField(Food food, {required String field}) async {
     try {
+      Food foodToUpdate = Food.copy(food);
       if (field == 'today') {
-        food.fdIsToday = food.fdIsToday == 'true' ? 'false' : 'true';
+        foodToUpdate.fdIsToday = foodToUpdate.fdIsToday == 'true' ? 'false' : 'true';
       } else if (field == 'available') {
-        food.fdIsAvailable = food.fdIsAvailable == 'true' ? 'false' : 'true';
+        foodToUpdate.fdIsAvailable = foodToUpdate.fdIsAvailable == 'true' ? 'false' : 'true';
       } else if (field == 'special') {
-        food.fdIsSpecial = food.fdIsSpecial == 'true' ? 'false' : 'true';
-      }else if (field == 'quick') {
-        food.fdIsQuick = food.fdIsQuick == 'true' ? 'false' : 'true';
-      }else{
-
-      }
-      ApiResponse<Food>? apiResponse = await foodRepository.updateSelectedFields(food);
+        foodToUpdate.fdIsSpecial = foodToUpdate.fdIsSpecial == 'true' ? 'false' : 'true';
+      } else if (field == 'quick') {
+        foodToUpdate.fdIsQuick = foodToUpdate.fdIsQuick == 'true' ? 'false' : 'true';
+      } else {}
+      ApiResponse<Food>? apiResponse = await foodRepository.updateSelectedFields(foodToUpdate);
       if (apiResponse != null) {
         if (apiResponse.error) {
           AppSnackBar.errorSnackBar('Error', apiResponse.message);
@@ -127,8 +127,49 @@ class FoodMenuController extends GetxController {
           return true;
         }
       } else {
-        AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+       //? AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
         return false;
+      }
+    } catch (e) {
+      AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+    } finally {
+      update();
+    }
+  }
+
+  setAndRemoveOffer(Food food) async {
+    try {
+      //? if already offer , user want to remove (Button showing remove offer)
+      if (food.offer == 'true') {
+        Food foodToUpdate = Food.copy(food);
+        foodToUpdate.offer = 'false';
+        foodToUpdate.offerName = 'No Offer';
+        foodToUpdate.fdOffFullPrice = foodToUpdate.fdFullPrice;
+        foodToUpdate.fdOffThreeByTwoPrice = foodToUpdate.fdThreeBiTwoPrsPrice;
+        foodToUpdate.fdOffHalfPrice = foodToUpdate.fdHalfPrice;
+        foodToUpdate.fdOffQtrPrice = foodToUpdate.fdQtrPrice;
+        ApiResponse<Food>? apiResponse = await foodRepository.updateOfferFields(foodToUpdate);
+        if (apiResponse != null) {
+          if (apiResponse.error) {
+            AppSnackBar.errorSnackBar('Error', apiResponse.message);
+            Navigator.pop(Get.context!);
+            return false;
+          } else {
+            AppSnackBar.successSnackBar('Success', apiResponse.message);
+            getAllFood(showSnack: false);
+            Navigator.pop(Get.context!);
+            return true;
+          }
+        } else {
+         //? AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+          return false;
+        }
+      } else {
+        Navigator.pop(Get.context!);
+        Get.offNamed(
+          AppPages.CREATEOFFER_PAGE,
+          arguments: {'food': food},
+        );
       }
     } catch (e) {
       AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
@@ -150,8 +191,7 @@ class FoodMenuController extends GetxController {
           break;
         case -300: // Today's foods
           filteredFoods = _storedAllFoods.where((food) => food.fdIsAvailable == 'true').toList();
-          _storedAllFoods.forEach((element) {
-          });
+          _storedAllFoods.forEach((element) {});
           break;
         case -400: // Available foods
           filteredFoods = _storedAllFoods.where((food) => food.fdIsQuick == 'true').toList();
@@ -164,7 +204,7 @@ class FoodMenuController extends GetxController {
       }
     } else {
       // Categories from server
-      filteredFoods = List.from(_storedAllFoods);
+      filteredFoods = _storedAllFoods.where((food) => food.fdCategory == category).toList();
     }
     _myAllFoods.clear();
     _myAllFoods.addAll(filteredFoods);
@@ -212,4 +252,29 @@ class FoodMenuController extends GetxController {
     update();
   }
 
+  deleteFood(int id, String imgUrl, {bool showSnack = true}) async {
+    try {
+      Uri uri = Uri.parse(imgUrl);
+      String imageNameFromUrl = uri.pathSegments.last;
+      String imgName = imageNameFromUrl == 'sample.jpg' ? 'no_name' : imageNameFromUrl;
+      ApiResponse<Food>? apiResponse = await foodRepository.deleteFood(id, imgName);
+      if (apiResponse != null) {
+        if (apiResponse.error) {
+          AppSnackBar.errorSnackBar('Error', apiResponse.message);
+          return false;
+        } else {
+          showSnack == true ? AppSnackBar.successSnackBar('Success', apiResponse.message) : null;
+          getAllFood();
+          return true;
+        }
+      } else {
+      //?  AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+        return false;
+      }
+    } catch (e) {
+      AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+    } finally {
+      update();
+    }
+  }
 }

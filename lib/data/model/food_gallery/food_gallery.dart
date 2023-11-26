@@ -9,8 +9,8 @@ class FoodGalleryItem {
   @JsonKey(name : "name")
   String? name;
 
-  @JsonKey(name : "category")
-  String? category;
+  @JsonKey(name : "fdGallCatId")
+  int? fdGallCatId;
 
   @JsonKey(name : "fdImg")
   String? fdImg;
@@ -21,7 +21,7 @@ class FoodGalleryItem {
   FoodGalleryItem(
       this.id,
       this.name,
-      this.category,
+      this.fdGallCatId,
       this.fdImg,
       this.createdAt
       );

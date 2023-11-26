@@ -9,6 +9,7 @@ class AddCategoryCardTextField extends StatelessWidget {
   final Function onTapAdd;
   final Function onTapBack;
   final double height;
+  final FocusNode? focusNode;
   final TextEditingController nameController;
 
   const AddCategoryCardTextField({
@@ -16,7 +17,7 @@ class AddCategoryCardTextField extends StatelessWidget {
     required this.onTapAdd,
     required this.onTapBack,
     required this.nameController,
-    required this.height,
+    required this.height,  this.focusNode,
 
   }) : super(key: key);
 
@@ -54,11 +55,13 @@ class AddCategoryCardTextField extends StatelessWidget {
                     controller: nameController,
                     maxLines: 1,
                     autofocus: true,
+                    onSubmitted: (_) => onTapAdd(),
+                    focusNode: focusNode,
                     inputFormatters: [
                       LengthLimitingTextInputFormatter(13),
                     ],
                     decoration: InputDecoration(
-                      hintText: 'Name',
+                      hintText: 'Name ...',
                       border: InputBorder.none,
                       hintStyle: TextStyle(
                         color: AppColors.textGrey,

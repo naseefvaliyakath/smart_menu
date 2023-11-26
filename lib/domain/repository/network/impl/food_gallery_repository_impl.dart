@@ -18,7 +18,9 @@ class FoodGalleryRepositoryImpl implements FoodGalleryRepository {
       final ApiResponse<List<FoodGalleryItem>> apiResponse = ApiResponse<List<FoodGalleryItem>>.fromJson(
         response.data,
             (json) => (json as List).map((item) => FoodGalleryItem.fromJson(item)).toList(),
+
       );
+      print(apiResponse.data!.length);
       return apiResponse;
     } catch (e) {
       AppSnackBar.errorSnackBar('Error',e.toString());
@@ -36,7 +38,7 @@ class FoodGalleryRepositoryImpl implements FoodGalleryRepository {
       );
       return apiResponse;
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error',e.toString());
+       AppSnackBar.errorSnackBar('Error',e.toString());
       return null;
     }
   }
@@ -51,7 +53,7 @@ class FoodGalleryRepositoryImpl implements FoodGalleryRepository {
       );
       return apiResponse;
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error',e.toString());
+    //?  AppSnackBar.errorSnackBar('Error',e.toString());
       return null;
     }
   }

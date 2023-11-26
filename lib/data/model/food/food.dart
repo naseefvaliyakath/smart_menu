@@ -2,69 +2,81 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'food.g.dart';
 
-
-
-
 @JsonSerializable()
 class Food {
-//? flutter pub run build_runner build --delete-conflicting-outputs
-  @JsonKey(name : "id")
+  @JsonKey(name: "id")
   int? id;
 
-  @JsonKey(name : "shopId")
+  @JsonKey(name: "shopId")
   int? shopId;
 
-  @JsonKey(name : "fdName")
+  @JsonKey(name: "fdName")
   String? fdName;
 
-  @JsonKey(name : "foodDescription")
+  @JsonKey(name: "foodDescription")
   String? foodDescription;
 
-  @JsonKey(name : "fdCategory")
+  @JsonKey(name: "fdCategory")
   int? fdCategory;
 
-  @JsonKey(name : "fdFullPrice")
+  @JsonKey(name: "fdFullPrice")
   double? fdFullPrice;
 
-  @JsonKey(name : "fdThreeBiTwoPrsPrice")
+  @JsonKey(name: "fdThreeBiTwoPrsPrice")
   double? fdThreeBiTwoPrsPrice;
 
-  @JsonKey(name : "fdHalfPrice")
+  @JsonKey(name: "fdHalfPrice")
   double? fdHalfPrice;
 
-  @JsonKey(name : "fdQtrPrice")
+  @JsonKey(name: "fdQtrPrice")
   double? fdQtrPrice;
 
-  @JsonKey(name : "fdIsLoos")
+  @JsonKey(name: "fdOffFullPrice")
+  double? fdOffFullPrice;
+
+  @JsonKey(name: "fdOffThreeByTwoPrice")
+  double? fdOffThreeByTwoPrice;
+
+  @JsonKey(name: "fdOffHalfPrice")
+  double? fdOffHalfPrice;
+
+  @JsonKey(name: "fdOffQtrPrice")
+  double? fdOffQtrPrice;
+
+  @JsonKey(name: "offerName")
+  String? offerName;
+
+  @JsonKey(name: "fdIsLoos")
   String? fdIsLoos;
 
-  @JsonKey(name : "cookTime")
+  @JsonKey(name: "cookTime")
   int? cookTime;
 
-  @JsonKey(name : "fdImg")
+  @JsonKey(name: "fdImg")
   String? fdImg;
 
-  @JsonKey(name : "fdIsToday")
+  @JsonKey(name: "fdIsToday")
   String? fdIsToday;
 
-  @JsonKey(name : "fdIsQuick")
+  @JsonKey(name: "fdIsQuick")
   String? fdIsQuick;
 
-  @JsonKey(name : "fdIsAvailable")
+  @JsonKey(name: "fdIsAvailable")
   String? fdIsAvailable;
 
-  @JsonKey(name : "fdIsSpecial")
+  @JsonKey(name: "fdIsSpecial")
   String? fdIsSpecial;
 
-  @JsonKey(name : "offer")
+  @JsonKey(name: "offer")
   String? offer;
 
-  @JsonKey(name : "createdAt")
+  @JsonKey(name: "createdAt")
   String? createdAt;
 
-  @JsonKey(name : "updatedAt")
+  @JsonKey(name: "updatedAt")
   String? updatedAt;
 
+  // Regular constructor
   Food(
       this.id,
       this.shopId,
@@ -75,6 +87,11 @@ class Food {
       this.fdThreeBiTwoPrsPrice,
       this.fdHalfPrice,
       this.fdQtrPrice,
+      this.fdOffFullPrice,
+      this.fdOffThreeByTwoPrice,
+      this.fdOffHalfPrice,
+      this.fdOffQtrPrice,
+      this.offerName,
       this.fdIsLoos,
       this.cookTime,
       this.fdImg,
@@ -84,9 +101,38 @@ class Food {
       this.fdIsSpecial,
       this.offer,
       this.createdAt,
-      this.updatedAt,
-      );
+      this.updatedAt);
 
+  // Copy constructor
+  Food.copy(Food other)
+      : id = other.id,
+        shopId = other.shopId,
+        fdName = other.fdName,
+        foodDescription = other.foodDescription,
+        fdCategory = other.fdCategory,
+        fdFullPrice = other.fdFullPrice,
+        fdThreeBiTwoPrsPrice = other.fdThreeBiTwoPrsPrice,
+        fdHalfPrice = other.fdHalfPrice,
+        fdQtrPrice = other.fdQtrPrice,
+        fdOffFullPrice = other.fdOffFullPrice,
+        fdOffThreeByTwoPrice = other.fdOffThreeByTwoPrice,
+        fdOffHalfPrice = other.fdOffHalfPrice,
+        fdOffQtrPrice = other.fdOffQtrPrice,
+        offerName = other.offerName,
+        fdIsLoos = other.fdIsLoos,
+        cookTime = other.cookTime,
+        fdImg = other.fdImg,
+        fdIsToday = other.fdIsToday,
+        fdIsQuick = other.fdIsQuick,
+        fdIsAvailable = other.fdIsAvailable,
+        fdIsSpecial = other.fdIsSpecial,
+        offer = other.offer,
+        createdAt = other.createdAt,
+        updatedAt = other.updatedAt;
+
+  // From JSON
   factory Food.fromJson(Map<String, dynamic> json) => _$FoodFromJson(json);
+
+  // To JSON
   Map<String, dynamic> toJson() => _$FoodToJson(this);
 }

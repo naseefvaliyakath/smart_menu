@@ -11,10 +11,16 @@ class GalleryDropdown extends StatefulWidget {
 }
 
 class GalleryDropdownState extends State<GalleryDropdown> {
-  List<String?> categories = Get.find<HomeController>().foodGalleryCategory.map((item) => item.name).toList();
-  String selectedCategory = Get.find<HomeController>().foodGalleryCategory.isNotEmpty ? (Get.find<HomeController>().foodGalleryCategory.first.name ?? '') : '';
+  late Map<int, String> categoriesMap;
+  int? selectedCategoryId;
 
-
+  @override
+  void initState() {
+    super.initState();
+    var categories = Get.find<HomeController>().foodGalleryCategory;
+    categoriesMap = { for (var item in categories) (item.id ?? 0): item.name ?? 'Error' };
+    selectedCategoryId = categories.isNotEmpty ? categories.first.id : null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,21 +39,21 @@ class GalleryDropdownState extends State<GalleryDropdown> {
         ],
       ),
       child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: selectedCategory,
+        child: DropdownButton<int>(
+          value: selectedCategoryId,
           hint: Text(
-            selectedCategory,
+            categoriesMap[selectedCategoryId] ?? 'Select Category',
             style: TextStyle(
               fontSize: 18.sp, // adjust the font size here
               fontWeight: FontWeight.bold, // make the text bold
             ),
           ),
           isExpanded: true,
-          items: categories.map((String? value) {
-            return DropdownMenuItem<String>(
-              value: value,
+          items: categoriesMap.entries.map((entry) {
+            return DropdownMenuItem<int>(
+              value: entry.key,
               child: Text(
-                value ?? '',
+                entry.value,
                 style: TextStyle(
                   fontSize: 18.sp, // adjust the font size here
                   fontWeight: FontWeight.bold, // make the text bold
@@ -57,8 +63,8 @@ class GalleryDropdownState extends State<GalleryDropdown> {
           }).toList(),
           onChanged: (newValue) {
             setState(() {
-              selectedCategory = newValue ?? '';
-              Get.find<HomeController>().filterFoodGalleryByCategory(selectedCategory);
+              selectedCategoryId = newValue;
+              Get.find<HomeController>().filterFoodGalleryByCategory(selectedCategoryId ?? 0);
             });
           },
         ),

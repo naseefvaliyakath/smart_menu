@@ -23,6 +23,7 @@ class DashBoardCard extends StatelessWidget {
       },
       child: Card(
         elevation: 5,
+        surfaceTintColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         child: Padding(
           padding: EdgeInsets.all(33.h),

@@ -28,6 +28,18 @@ dependencies:
   path_provider: ^2.0.15
   flutter_image_compress: ^2.0.3
   flutter_cache_manager: ^3.3.1
+  qr_flutter: ^4.1.0
+  share_plus: ^7.2.1
+  screenshot: ^2.1.0
+  image_gallery_saver: ^2.0.3
+  otp_text_field_v2: ^1.0.3
+  intl: ^0.18.1
+  loading_icon_button: ^0.0.6
+  internet_connection_checker: ^1.0.0+1
+  flutter_secure_storage: ^9.0.0
+  open_store: ^0.5.0
+  package_info_plus: ^5.0.1
+  device_info_plus: ^9.1.1
 
   flutter:
     sdk: flutter

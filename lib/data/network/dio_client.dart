@@ -1,16 +1,28 @@
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get/get.dart' hide Response,FormData;
 import 'package:path_provider/path_provider.dart';
+import 'package:smart_menu/constants/app_constant_names.dart';
 import '../../constants/url.dart';
 
-class DioClient {
-  final Dio _dio;
+class DioClient extends GetxController{
+  //? secure storage for saving token
+  FlutterSecureStorage storage = const FlutterSecureStorage();
+  Dio _dio = Dio();
+  String token = '';
 
-  DioClient({String? token})
-      : _dio = Dio(BaseOptions(baseUrl: BASE_URL, headers: {"Authorization": token != null ? "Bearer $token" : ""})) {
+
+  @override
+  Future<void> onInit() async {
+    token = await storage.read(key: KEY_TOKEN) ?? '';
+    print('Token $token');
+    _dio = Dio(BaseOptions(baseUrl: BASE_URL, headers: {"Authorization": "Bearer $token"}));
     initializeInterceptors();
+    super.onInit();
   }
+
 
   Future<Response> getRequest(String url) async {
     // TODO: implement getRequest
@@ -19,7 +31,7 @@ class DioClient {
     try {
       response = await _dio.get(url);
     } on DioException catch (e) {
-      throw Exception(e.message);
+      throw Exception(e.type);
     } catch (e) {
       rethrow;
     } finally {}
@@ -34,7 +46,7 @@ class DioClient {
     try {
       response = await _dio.get(url, queryParameters: body);
     } on DioException catch (e) {
-      throw Exception(e.message);
+      throw Exception(e.type);
     } catch (e) {
       rethrow;
     } finally {}
@@ -48,7 +60,7 @@ class DioClient {
     try {
       response = await _dio.delete(id != null ? '$url/$id' : url);
     } on DioException catch (e) {
-      throw Exception(e.message);
+      throw Exception(e.type);
     } catch (e) {
       rethrow;
     } finally {}
@@ -60,7 +72,7 @@ class DioClient {
     try {
       response = await _dio.put(url, data: json.encode(body));
     } on DioException catch (e) {
-      throw Exception(e.message);
+      throw Exception(e.type);
     } catch (e) {
       rethrow;
     } finally {}
@@ -75,7 +87,7 @@ class DioClient {
     try {
       response = await _dio.post(url, data: body);
     } on DioException catch (e) {
-      throw Exception(e.message);
+      throw Exception(e.type);
     } catch (e) {
       rethrow;
     } finally {}
@@ -88,7 +100,7 @@ class DioClient {
     try {
       response = await _dio.post(url, data: formData);
     } on DioException catch (e) {
-      throw Exception(e.message);
+      throw Exception(e.type);
     } catch (e) {
       rethrow;
     } finally {}
@@ -102,7 +114,7 @@ class DioClient {
     try {
       response = await _dio.put(url, data: formData);
     } on DioException catch (e) {
-      throw Exception(e.message);
+      throw Exception(e.type);
     } catch (e) {
       rethrow;
     } finally {}
@@ -116,8 +128,8 @@ class DioClient {
       var dir = await getApplicationDocumentsDirectory();
       await _dio.download(url, "${dir.path}/$filename");
       return "${dir.path}/$filename";
-    } on DioError catch (e) {
-      throw Exception(e.message);
+    } on DioException catch (e) {
+      throw Exception(e.type);
     } catch (e) {
       rethrow;
     }
@@ -143,4 +155,11 @@ class DioClient {
       return handler.next(e);
     }));
   }
+
+  updatingToken(tokenFromLogin) {
+    token = tokenFromLogin;
+    _dio = Dio(BaseOptions(baseUrl: BASE_URL, headers: {"Authorization": "Bearer $token"}));
+    update();
+  }
+
 }

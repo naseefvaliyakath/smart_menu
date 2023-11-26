@@ -10,7 +10,7 @@ FoodGalleryItem _$FoodGalleryItemFromJson(Map<String, dynamic> json) =>
     FoodGalleryItem(
       json['id'] as int?,
       json['name'] as String?,
-      json['category'] as String?,
+      json['fdGallCatId'] as int?,
       json['fdImg'] as String?,
       json['created_date'] as String?,
     );
@@ -19,7 +19,7 @@ Map<String, dynamic> _$FoodGalleryItemToJson(FoodGalleryItem instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'category': instance.category,
+      'fdGallCatId': instance.fdGallCatId,
       'fdImg': instance.fdImg,
       'created_date': instance.createdAt,
     };

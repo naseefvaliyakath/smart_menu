@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'buttons/round_border_button.dart';
+import 'buttons/round_border_button.dart';  // Make sure this import is correctly pointing to your RoundBorderButton widget
 
 class FlexibleBtnBottomSheet {
   static void bottomSheet({
@@ -11,17 +11,19 @@ class FlexibleBtnBottomSheet {
     String? b4Name,
     String? b5Name,
     String? b6Name,
+    String? b7Name, // Added b7Name parameter
     required Function b1Function,
     required Function b2Function,
     Function? b3Function,
     Function? b4Function,
     Function? b5Function,
     Function? b6Function,
+    Function? b7Function, // Added b7Function parameter
   }) {
-    int buttonCount = 2 + (b3Name != null ? 1 : 0) + (b4Name != null ? 1 : 0) + (b5Name != null ? 1 : 0) + (b6Name != null ? 1 : 0);
-    double buttonHeight = 60.h; // change this to your button's height
-    double buttonSpacing = 30.h; // change this to your spacing
-    double totalHeight = (buttonCount * buttonHeight) + ((buttonCount - 1) * buttonSpacing) + 100.h; // adding padding
+    int buttonCount = 2 + (b3Name != null ? 1 : 0) + (b4Name != null ? 1 : 0) + (b5Name != null ? 1 : 0) + (b6Name != null ? 1 : 0) + (b7Name != null ? 1 : 0); // Updated button count
+    double buttonHeight = 60.h;
+    double buttonSpacing = 30.h;
+    double totalHeight = (buttonCount * buttonHeight) + ((buttonCount - 1) * buttonSpacing) + 100.h;
 
     Get.bottomSheet(
       Container(
@@ -52,7 +54,6 @@ class FlexibleBtnBottomSheet {
                 textColor: Colors.white,
                 onTap: b2Function,
               ),
-              // Check if b3Name and b3Function are not null before adding Button 3
               if (b3Name != null && b3Function != null)
                 SizedBox(height: buttonSpacing),
               if (b3Name != null && b3Function != null)
@@ -61,7 +62,6 @@ class FlexibleBtnBottomSheet {
                   textColor: Colors.white,
                   onTap: b3Function,
                 ),
-              // Check if b4Name and b4Function are not null before adding Button 4
               if (b4Name != null && b4Function != null)
                 SizedBox(height: buttonSpacing),
               if (b4Name != null && b4Function != null)
@@ -70,7 +70,6 @@ class FlexibleBtnBottomSheet {
                   textColor: Colors.white,
                   onTap: b4Function,
                 ),
-              // Check if b5Name and b5Function are not null before adding Button 5
               if (b5Name != null && b5Function != null)
                 SizedBox(height: buttonSpacing),
               if (b5Name != null && b5Function != null)
@@ -79,7 +78,6 @@ class FlexibleBtnBottomSheet {
                   textColor: Colors.white,
                   onTap: b5Function,
                 ),
-              // Check if b6Name and b6Function are not null before adding Button 6
               if (b6Name != null && b6Function != null)
                 SizedBox(height: buttonSpacing),
               if (b6Name != null && b6Function != null)
@@ -88,12 +86,21 @@ class FlexibleBtnBottomSheet {
                   textColor: Colors.white,
                   onTap: b6Function,
                 ),
+              // Added Button 7
+              if (b7Name != null && b7Function != null)
+                SizedBox(height: buttonSpacing),
+              if (b7Name != null && b7Function != null)
+                RoundBorderButton(
+                  text: b7Name,
+                  textColor: Colors.white,
+                  onTap: b7Function,
+                ),
             ],
           ),
         ),
       ),
-      enterBottomSheetDuration: const Duration(milliseconds: 300),
-      exitBottomSheetDuration: const Duration(milliseconds: 300),
+      enterBottomSheetDuration: const Duration(milliseconds: 500),
+      exitBottomSheetDuration: const Duration(milliseconds: 500),
     );
   }
 }
