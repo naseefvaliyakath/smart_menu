@@ -1,5 +1,6 @@
 import 'package:smart_menu/data/model/api_response/api_response.dart';
 import 'package:smart_menu/data/model/app_update_model/app_update_model.dart';
+import 'package:smart_menu/data/model/item_purchase_model/item_purchase_model.dart';
 import 'package:smart_menu/data/model/shop/shop.dart';
 import '../../../../data/network/dio_client.dart';
 import '../../../../presentation/widget/snack_bar.dart';
@@ -81,6 +82,21 @@ class ShopRepositoryImpl implements ShopRepository {
       );
       return apiResponse;
     } catch (e) {
+      return null;
+    }
+  }
+
+  @override
+  Future<ApiResponse<List<ItemPurchaseModel>>?> getAllPurchaseItem() async {
+    try {
+      final response = await _dioClient.getRequest('itemPurchase/');
+      final ApiResponse<List<ItemPurchaseModel>> apiResponse = ApiResponse<List<ItemPurchaseModel>>.fromJson(
+        response.data,
+            (json) => (json as List).map((item) => ItemPurchaseModel.fromJson(item)).toList(),
+      );
+      return apiResponse;
+    } catch (e) {
+      //?  AppSnackBar.errorSnackBar('Error',e.toString());
       return null;
     }
   }

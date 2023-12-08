@@ -38,7 +38,7 @@ class FoodMenuController extends GetxController {
   @override
   void onInit() async {
     await getAllCategory();
-    await getAllFood();
+    await getAllFood(showSnack: false);
     super.onInit();
   }
 
@@ -111,8 +111,8 @@ class FoodMenuController extends GetxController {
         foodToUpdate.fdIsToday = foodToUpdate.fdIsToday == 'true' ? 'false' : 'true';
       } else if (field == 'available') {
         foodToUpdate.fdIsAvailable = foodToUpdate.fdIsAvailable == 'true' ? 'false' : 'true';
-      } else if (field == 'special') {
-        foodToUpdate.fdIsSpecial = foodToUpdate.fdIsSpecial == 'true' ? 'false' : 'true';
+      } else if (field == 'hide') {
+        foodToUpdate.fdIsHide = foodToUpdate.fdIsHide == 'true' ? 'false' : 'true';
       } else if (field == 'quick') {
         foodToUpdate.fdIsQuick = foodToUpdate.fdIsQuick == 'true' ? 'false' : 'true';
       } else {}
@@ -187,7 +187,7 @@ class FoodMenuController extends GetxController {
           filteredFoods = List.from(_storedAllFoods);
           break;
         case -200: // Special foods
-          filteredFoods = _storedAllFoods.where((food) => food.fdIsSpecial == 'true').toList();
+          filteredFoods = _storedAllFoods.where((food) => food.fdIsHide == 'true').toList();
           break;
         case -300: // Today's foods
           filteredFoods = _storedAllFoods.where((food) => food.fdIsAvailable == 'true').toList();

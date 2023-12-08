@@ -141,15 +141,14 @@ class FoodMenuPage extends StatelessWidget {
                               return InkWell(
                                 onTap: () {
                                   FlexibleBtnBottomSheet.bottomSheet(
+                                    context: context,
                                     b1Name: ctrl.myAllFoods[index].fdIsToday == 'false'
                                         ? 'Add To Today'
                                         : 'Remove From Today',
                                     b2Name: ctrl.myAllFoods[index].fdIsAvailable == 'false'
                                         ? 'Add To Available'
                                         : 'Remove From Available',
-                                    b3Name: ctrl.myAllFoods[index].fdIsSpecial == 'false'
-                                        ? 'Add To Special'
-                                        : 'Remove From Special',
+                                    b3Name: ctrl.myAllFoods[index].fdIsHide == 'false' ? 'Hide Food' : 'Visible Food',
                                     b4Name: ctrl.myAllFoods[index].fdIsQuick == 'false'
                                         ? 'Add To Quick'
                                         : 'Remove From Quick',
@@ -165,7 +164,7 @@ class FoodMenuPage extends StatelessWidget {
                                       Navigator.pop(context);
                                     },
                                     b3Function: () {
-                                      ctrl.updateSelectedField(ctrl.myAllFoods[index], field: 'special');
+                                      ctrl.updateSelectedField(ctrl.myAllFoods[index], field: 'hide');
                                       Navigator.pop(context);
                                     },
                                     b4Function: () {
@@ -199,10 +198,14 @@ class FoodMenuPage extends StatelessWidget {
                                   priceThreeByTwo: ctrl.myAllFoods[index].fdThreeBiTwoPrsPrice ?? 0,
                                   priceHalf: ctrl.myAllFoods[index].fdHalfPrice ?? 0,
                                   priceQuarter: ctrl.myAllFoods[index].fdQtrPrice ?? 0,
+                                  fullPrsTagName: ctrl.myAllFoods[index].fullPrsName ?? 'Full',
+                                  threeByTwoPrsName: ctrl.myAllFoods[index].thrByToPrsName ??'3/4',
+                                  halfPrsName: ctrl.myAllFoods[index].halfPrsName ?? 'Half',
+                                  quarterPrsName: ctrl.myAllFoods[index].qtrPrsName ?? 'Quarter',
                                   today: ctrl.myAllFoods[index].fdIsToday ?? 'false',
                                   available: ctrl.myAllFoods[index].fdIsAvailable ?? 'false',
                                   quick: ctrl.myAllFoods[index].fdIsQuick ?? 'false',
-                                  special: ctrl.myAllFoods[index].fdIsSpecial ?? 'false',
+                                  hide: ctrl.myAllFoods[index].fdIsHide ?? 'false',
                                   offer: ctrl.myAllFoods[index].offer ?? 'false',
                                   fdIsLoos: ctrl.myAllFoods[index].fdIsLoos ?? 'false',
                                 ),

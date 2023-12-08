@@ -4,14 +4,19 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:smart_menu/constants/colors/app_colors.dart';
+import 'package:smart_menu/core/routes/app_pages.dart';
+import 'package:smart_menu/presentation/view/setup_qr_stand/customize_qr_stand.dart';
+import 'package:smart_menu/presentation/view/setup_qr_stand/steps_for_qr_stand.dart';
 import 'package:smart_menu/presentation/widget/common/common_text/big_text.dart';
 import '../widget/common/buttons/app_rount_mini_btn.dart';
+import '../widget/common/image_tile.dart';
 import '../widget/snack_bar.dart';
 
 class QRCodeTableStand extends StatelessWidget {
@@ -78,18 +83,16 @@ class QRCodeTableStand extends StatelessWidget {
               ],
             ),
             10.verticalSpace,
-            const Text(
-              'Please print the QR Code & Put in  Your Table\n'
-                  'Then Customers can Scan & Find The Menu\n'
-                  'Enjoy this . It\'s quick and easy!',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 16.0,
-                height: 1.5,
-                color: Colors.black38
-              ),
-            )
-
+            ImageTile(
+              index: '',
+              imageUrl: 'assets/image/qr-stand.png',
+              title: 'Setup QR Code Stand',
+              subtitle: 'Click to learn how to setup QR code stand in 3 steps',
+              onTap: () {
+               // Get.toNamed(AppPages.CUSTOMIZE_QR_STAND_PAGE);
+                Get.to(StepsForQrStand());
+              },
+            ),
           ],
         ),
       ),

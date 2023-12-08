@@ -12,27 +12,35 @@ class FoodCard extends StatelessWidget {
   final double priceThreeByTwo;
   final double priceHalf;
   final double priceQuarter;
+  final String fullPrsTagName;
+  final String threeByTwoPrsName;
+  final String halfPrsName;
+  final String quarterPrsName;
   final String fdIsLoos;
   final String today;
   final String available;
   final String quick;
-  final String special;
+  final String hide;
   final String offer;
 
   const FoodCard(
       {Key? key,
-        required this.img,
-        required this.name,
-        required this.price,
-        this.today = 'false',
-        required this.priceThreeByTwo,
-        required this.priceHalf,
-        required this.priceQuarter,
-        required this.fdIsLoos,
-        required this.quick,
-        required this.special,
-        required this.offer,
-        required this.available})
+      required this.img,
+      required this.name,
+      required this.price,
+      this.today = 'false',
+      required this.priceThreeByTwo,
+      required this.priceHalf,
+      required this.priceQuarter,
+      required this.fdIsLoos,
+      required this.quick,
+      required this.hide,
+      required this.offer,
+      required this.available,
+      required this.fullPrsTagName,
+      required this.threeByTwoPrsName,
+      required this.halfPrsName,
+      required this.quarterPrsName})
       : super(key: key);
 
   @override
@@ -41,7 +49,7 @@ class FoodCard extends StatelessWidget {
       if (available == 'true') _buildLabel('Available', Colors.green.withOpacity(0.8)),
       if (today == 'true') _buildLabel('Today', AppColors.mainColor.withOpacity(0.8)),
       if (quick == 'true') _buildLabel('Quick', Colors.purpleAccent.withOpacity(0.8)),
-      if (special == 'true') _buildLabel('Special', Colors.blue.withOpacity(0.8)),
+      if (hide == 'true') _buildLabel('Hided', Colors.blue.withOpacity(0.8)),
       if (offer == 'true') _buildLabel('Offer', Colors.purple.withOpacity(0.8)),
     ];
 
@@ -102,7 +110,7 @@ class FoodCard extends StatelessWidget {
                     ),
                     overflow: TextOverflow.fade,
                   ),
-                  Text(fdIsLoos == 'yes' ? 'Full      : $price' : 'Rs : $price',
+                  Text(fdIsLoos == 'true' ? '$fullPrsTagName : $price' : 'Rs : $price',
                       softWrap: false,
                       style: TextStyle(
                         fontSize: 1.sh / 49,
@@ -115,21 +123,21 @@ class FoodCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('3 by 4       : $priceThreeByTwo',
+                        Text('$threeByTwoPrsName  : $priceThreeByTwo',
                             softWrap: false,
                             style: TextStyle(
                               fontSize: 1.sh / 69,
                               color: Colors.white70,
                               fontWeight: FontWeight.bold,
                             )),
-                        Text('Half           : $priceHalf',
+                        Text('$halfPrsName  : $priceHalf',
                             softWrap: false,
                             style: TextStyle(
                               fontSize: 1.sh / 69,
                               color: Colors.white70,
                               fontWeight: FontWeight.bold,
                             )),
-                        Text('Quarter    : $priceQuarter',
+                        Text('$quarterPrsName : $priceQuarter',
                             softWrap: false,
                             style: TextStyle(
                               fontSize: 1.sh / 69,

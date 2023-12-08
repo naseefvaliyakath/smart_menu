@@ -34,14 +34,26 @@ class AddFoodController extends GetxController {
   late TextEditingController fdHalfPriceTD;
   late TextEditingController fdQtrPriceTD;
 
+  //? priceTypeName
+   String fullPriceName = 'Full';
+   String threeBiTwoPriceName= '3/4';
+   String halfPriceName= 'Half';
+   String qtrPriceName= 'Quarter';
+
+  //? price-tag txt controllers
+  late TextEditingController fullPrsNameTD;
+  late TextEditingController thrByToPrsNameTD;
+  late TextEditingController halfPrsNameTD;
+  late TextEditingController qtrPrsNameTD;
+
   //?focus Nodes
-   FocusNode nameFocusNode = FocusNode();
-   FocusNode descriptionFocusNode= FocusNode();
-   FocusNode priceFocusNode= FocusNode();
-   FocusNode fullPriceFocusNode= FocusNode();
-   FocusNode threeBiTwoPrsFocusNode= FocusNode();
-   FocusNode halfPriceFocusNode= FocusNode();
-   FocusNode qtrPriceFocusNode= FocusNode();
+  FocusNode nameFocusNode = FocusNode();
+  FocusNode descriptionFocusNode = FocusNode();
+  FocusNode priceFocusNode = FocusNode();
+  FocusNode fullPriceFocusNode = FocusNode();
+  FocusNode threeBiTwoPrsFocusNode = FocusNode();
+  FocusNode halfPriceFocusNode = FocusNode();
+  FocusNode qtrPriceFocusNode = FocusNode();
 
   //? category name controller for adding new category
   late TextEditingController categoryNameTD;
@@ -138,18 +150,27 @@ class AddFoodController extends GetxController {
           fdThreeBiTwoPrsTD.text.isEmpty ? 0 : (double.tryParse(fdThreeBiTwoPrsTD.text) ?? 0),
           fdHalfPriceTD.text.isEmpty ? 0 : (double.tryParse(fdHalfPriceTD.text) ?? 0),
           fdQtrPriceTD.text.isEmpty ? 0 : (double.tryParse(fdQtrPriceTD.text) ?? 0),
-          0, //? offer price set in server side
-          0, //? offer price set in server side
-          0, //? offer price set in server side
-          0, //? offer price set in server side
-          'No Offer',  //? offer name will set when offer creating
+          fullPriceName,   //?full price name
+          threeBiTwoPriceName,    //?3/2 price name
+          halfPriceName,   //?half price name
+          qtrPriceName, //?Quarter price name
+          0,
+          //? offer price set in server side
+          0,
+          //? offer price set in server side
+          0,
+          //? offer price set in server side
+          0,
+          //? offer price set in server side
+          'No Offer',
+          //? offer name will set when offer creating
           priceToggle.toString(),
           0,
           isUpdate ? (galleryImgLink ?? (foodToUpdate?.fdImg ?? IMG_LINK)) : galleryImgLink,
           isUpdate ? (foodToUpdate?.fdIsToday ?? 'false') : 'false',
           isUpdate ? (foodToUpdate?.fdIsQuick ?? 'false') : 'false',
           isUpdate ? (foodToUpdate?.fdIsAvailable ?? 'true') : 'true',
-          isUpdate ? (foodToUpdate?.fdIsSpecial ?? 'false') : 'false',
+          isUpdate ? (foodToUpdate?.fdIsHide ?? 'false') : 'false',
           isUpdate ? (foodToUpdate?.offer ?? 'false') : 'false',
           DateTime.now().toString(),
           DateTime.now().toString(),
@@ -159,7 +180,6 @@ class AddFoodController extends GetxController {
         if (!isUpdate) {
           //? add new food
           apiResponse = await foodRepository.addFood(food, file);
-
         } else {
           //? update food
           apiResponse = await foodRepository.updateFood(food, file);
@@ -195,17 +215,17 @@ class AddFoodController extends GetxController {
   setFoodDetailsIfUpdate(Food? food) async {
     try {
       if (food != null) {
-            loadImage(foodToUpdate?.fdImg);
-            priceToggle = bool.parse(food.fdIsLoos ?? 'false');
-            fdNameTD.text = food.fdName ?? 'Error';
-            fdDescriptionTD.text = food.foodDescription ?? 'Error';
-            fdPriceTD.text = food.fdFullPrice.toString();
-            fdFullPriceTD.text = food.fdFullPrice.toString();
-            fdThreeBiTwoPrsTD.text = food.fdThreeBiTwoPrsPrice.toString();
-            fdHalfPriceTD.text = food.fdHalfPrice.toString();
-            fdQtrPriceTD.text = food.fdQtrPrice.toString();
-            update();
-          }
+        loadImage(foodToUpdate?.fdImg);
+        priceToggle = bool.parse(food.fdIsLoos ?? 'false');
+        fdNameTD.text = food.fdName ?? 'Error';
+        fdDescriptionTD.text = food.foodDescription ?? 'Error';
+        fdPriceTD.text = food.fdFullPrice.toString();
+        fdFullPriceTD.text = food.fdFullPrice.toString();
+        fdThreeBiTwoPrsTD.text = food.fdThreeBiTwoPrsPrice.toString();
+        fdHalfPriceTD.text = food.fdHalfPrice.toString();
+        fdQtrPriceTD.text = food.fdQtrPrice.toString();
+        update();
+      }
     } catch (e) {
       AppSnackBar.errorSnackBar('Error', e.toString());
     }
@@ -251,7 +271,7 @@ class AddFoodController extends GetxController {
             return true;
           }
         } else {
-        //?  AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+          //?  AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
           return false;
         }
       } else {
@@ -316,7 +336,7 @@ class AddFoodController extends GetxController {
           return true;
         }
       } else {
-       //? AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+        //? AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
         return false;
       }
     } catch (e) {
@@ -328,14 +348,34 @@ class AddFoodController extends GetxController {
     }
   }
 
-
-
-
   //? updating the price toggle when toggle btn click
   setPriceToggle(bool val) {
     priceToggle = val;
     update();
   }
+
+
+
+  void updatePriceTagName() {
+    fullPriceName = fullPrsNameTD.text.isNotEmpty ? fullPrsNameTD.text : fullPriceName;
+    threeBiTwoPriceName = thrByToPrsNameTD.text.isNotEmpty ? thrByToPrsNameTD.text : threeBiTwoPriceName;
+    halfPriceName = halfPrsNameTD.text.isNotEmpty ? halfPrsNameTD.text : halfPriceName;
+    qtrPriceName = qtrPrsNameTD.text.isNotEmpty ? qtrPrsNameTD.text : qtrPriceName;
+    update();
+  }
+
+  //? to call when popup classing
+  //? else the text will remain in controller
+  clearPriceTagNameCtrlOnly(){
+    fullPrsNameTD.text = '';
+    thrByToPrsNameTD.text = '';
+    halfPrsNameTD.text = '';
+    qtrPrsNameTD.text = '';
+  }
+
+
+
+
 
   //?to clear value after toggle off
   void clearLoosPrice() {
@@ -356,6 +396,10 @@ class AddFoodController extends GetxController {
     fdThreeBiTwoPrsTD.text = '';
     fdHalfPriceTD.text = '';
     fdQtrPriceTD.text = '';
+    fullPrsNameTD.text = '';
+    thrByToPrsNameTD.text = '';
+    halfPrsNameTD.text = '';
+    qtrPrsNameTD.text = '';
     priceToggle = false;
     file = null;
     update();
@@ -371,6 +415,11 @@ class AddFoodController extends GetxController {
     fdQtrPriceTD = TextEditingController();
     //? category name controller for adding new category
     categoryNameTD = TextEditingController();
+    //? price tag controller
+    fullPrsNameTD = TextEditingController();
+    thrByToPrsNameTD = TextEditingController();
+    halfPrsNameTD = TextEditingController();
+    qtrPrsNameTD = TextEditingController();
   }
 
   disposeTxtCtrl() {
@@ -380,6 +429,10 @@ class AddFoodController extends GetxController {
     fdThreeBiTwoPrsTD.dispose();
     fdHalfPriceTD.dispose();
     fdQtrPriceTD.dispose();
+    fullPrsNameTD.dispose();
+    thrByToPrsNameTD.dispose();
+    halfPrsNameTD.dispose();
+    qtrPrsNameTD.dispose();
   }
 
   showLoading() {

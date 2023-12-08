@@ -1,10 +1,19 @@
 PODS:
+  - device_info_plus (0.0.1):
+    - Flutter
   - Flutter (1.0.0)
   - flutter_image_compress_common (1.0.0):
     - Flutter
     - Mantle
     - SDWebImage
     - SDWebImageWebPCoder
+  - flutter_inappwebview (0.0.1):
+    - Flutter
+    - flutter_inappwebview/Core (= 0.0.1)
+    - OrderedSet (~> 5.0)
+  - flutter_inappwebview/Core (0.0.1):
+    - Flutter
+    - OrderedSet (~> 5.0)
   - flutter_secure_storage (6.0.0):
     - Flutter
   - fluttertoast (0.0.2):
@@ -32,9 +41,14 @@ PODS:
   - Mantle (2.2.0):
     - Mantle/extobjc (= 2.2.0)
   - Mantle/extobjc (2.2.0)
+  - OrderedSet (5.0.0)
+  - package_info_plus (0.4.5):
+    - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - pay_ios (0.0.1):
+    - Flutter
   - SDWebImage (5.15.0):
     - SDWebImage/Core (= 5.15.0)
   - SDWebImage/Core (5.15.0)
@@ -46,36 +60,93 @@ PODS:
   - sqflite (0.0.3):
     - Flutter
     - FMDB (>= 2.7.5)
+  - Stripe (23.18.3):
+    - StripeApplePay (= 23.18.3)
+    - StripeCore (= 23.18.3)
+    - StripePayments (= 23.18.3)
+    - StripePaymentsUI (= 23.18.3)
+    - StripeUICore (= 23.18.3)
+  - stripe_ios (0.0.1):
+    - Flutter
+    - Stripe (~> 23.18.0)
+    - StripeApplePay (~> 23.18.0)
+    - StripeFinancialConnections (~> 23.18.0)
+    - StripePayments (~> 23.18.0)
+    - StripePaymentSheet (~> 23.18.0)
+    - StripePaymentsUI (~> 23.18.0)
+  - StripeApplePay (23.18.3):
+    - StripeCore (= 23.18.3)
+  - StripeCore (23.18.3)
+  - StripeFinancialConnections (23.18.3):
+    - StripeCore (= 23.18.3)
+    - StripeUICore (= 23.18.3)
+  - StripePayments (23.18.3):
+    - StripeCore (= 23.18.3)
+    - StripePayments/Stripe3DS2 (= 23.18.3)
+  - StripePayments/Stripe3DS2 (23.18.3):
+    - StripeCore (= 23.18.3)
+  - StripePaymentSheet (23.18.3):
+    - StripeApplePay (= 23.18.3)
+    - StripeCore (= 23.18.3)
+    - StripePayments (= 23.18.3)
+    - StripePaymentsUI (= 23.18.3)
+  - StripePaymentsUI (23.18.3):
+    - StripeCore (= 23.18.3)
+    - StripePayments (= 23.18.3)
+    - StripeUICore (= 23.18.3)
+  - StripeUICore (23.18.3):
+    - StripeCore (= 23.18.3)
   - Toast (4.0.0)
   - TOCropViewController (2.6.1)
+  - url_launcher_ios (0.0.1):
+    - Flutter
 
 DEPENDENCIES:
+  - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
   - flutter_image_compress_common (from `.symlinks/plugins/flutter_image_compress_common/ios`)
+  - flutter_inappwebview (from `.symlinks/plugins/flutter_inappwebview/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
   - image_gallery_saver (from `.symlinks/plugins/image_gallery_saver/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
+  - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - pay_ios (from `.symlinks/plugins/pay_ios/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - sqflite (from `.symlinks/plugins/sqflite/ios`)
+  - stripe_ios (from `.symlinks/plugins/stripe_ios/ios`)
+  - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
   trunk:
     - FMDB
     - libwebp
     - Mantle
+    - OrderedSet
     - SDWebImage
     - SDWebImageWebPCoder
+    - Stripe
+    - StripeApplePay
+    - StripeCore
+    - StripeFinancialConnections
+    - StripePayments
+    - StripePaymentSheet
+    - StripePaymentsUI
+    - StripeUICore
     - Toast
     - TOCropViewController
 
 EXTERNAL SOURCES:
+  device_info_plus:
+    :path: ".symlinks/plugins/device_info_plus/ios"
   Flutter:
     :path: Flutter
   flutter_image_compress_common:
     :path: ".symlinks/plugins/flutter_image_compress_common/ios"
+  flutter_inappwebview:
+    :path: ".symlinks/plugins/flutter_inappwebview/ios"
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
   fluttertoast:
@@ -86,16 +157,26 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_gallery_saver/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
+  package_info_plus:
+    :path: ".symlinks/plugins/package_info_plus/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  pay_ios:
+    :path: ".symlinks/plugins/pay_ios/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
   sqflite:
     :path: ".symlinks/plugins/sqflite/ios"
+  stripe_ios:
+    :path: ".symlinks/plugins/stripe_ios/ios"
+  url_launcher_ios:
+    :path: ".symlinks/plugins/url_launcher_ios/ios"
 
 SPEC CHECKSUMS:
+  device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   flutter_image_compress_common: ec1d45c362c9d30a3f6a0426c297f47c52007e3e
+  flutter_inappwebview: 3d32228f1304635e7c028b0d4252937730bbc6cf
   flutter_secure_storage: 23fc622d89d073675f2eaa109381aefbcf5a49be
   fluttertoast: fafc4fa4d01a6a9e4f772ecd190ffa525e9e2d9c
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
@@ -104,14 +185,27 @@ SPEC CHECKSUMS:
   image_picker_ios: 4a8aadfbb6dc30ad5141a2ce3832af9214a705b5
   libwebp: f62cb61d0a484ba548448a4bd52aabf150ff6eef
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
+  OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
+  package_info_plus: 115f4ad11e0698c8c1c5d8a689390df880f47e85
   path_provider_foundation: 29f094ae23ebbca9d3d0cec13889cd9060c0e943
+  pay_ios: 8c7beb9c61d885f3f51b61f75f8793023fc8843a
   SDWebImage: 9bec4c5cdd9579e1f57104735ee0c37df274d593
   SDWebImageWebPCoder: 295a6573c512f54ad2dd58098e64e17dcf008499
   share_plus: c3fef564749587fc939ef86ffb283ceac0baf9f5
   sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
+  Stripe: e046335ab6e3f25d39f1a55bd98620a85269cffa
+  stripe_ios: 37dd66ec680264019be16c5f47333f381164e6a6
+  StripeApplePay: 1aa77f8ec7a6d9463fa8f49ae0672fe59dbf4c73
+  StripeCore: fe10c34fb3c9ae18b986913f7e4460e7c653ce93
+  StripeFinancialConnections: 6022426894046f26fe21d348da02d83d8a637fb0
+  StripePayments: 7084fed30c5f03f15ae23c5dce63715ba0b53e15
+  StripePaymentSheet: c8d25d4133476c6238d3cc932fb8219bb5ea49c0
+  StripePaymentsUI: c12de264eda974d91e43a769f53a6c6afc9a1715
+  StripeUICore: 090c4fe916d039616ce8f8de30392f4aeb33dd16
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
+  url_launcher_ios: bf5ce03e0e2088bad9cc378ea97fa0ed5b49673b
 
-PODFILE CHECKSUM: 70d9d25280d0dd177a5f637cdb0f0b0b12c6a189
+PODFILE CHECKSUM: 2d5b9791a4a3318bc405239eee22df5845f131e2
 
 COCOAPODS: 1.11.3

@@ -22,7 +22,9 @@ class LoginController extends GetxController {
 
   Shop myShop = dummyShop;
 
-  final storage = const FlutterSecureStorage();
+  final storage = const FlutterSecureStorage(aOptions: AndroidOptions(
+    encryptedSharedPreferences: true,
+  ));
   ShopRepository shopRepository = Get.find<ShopRepository>();
 
   final LoadingButtonController btnController = LoadingButtonController();

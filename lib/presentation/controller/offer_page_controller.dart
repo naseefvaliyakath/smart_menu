@@ -33,7 +33,7 @@ class OfferPageController extends GetxController {
 
   @override
   void onInit() async {
-    getAllOfferFood();
+    getAllOfferFood(showSnack: false);
     super.onInit();
   }
 
@@ -72,37 +72,7 @@ class OfferPageController extends GetxController {
 
 
 
-  void filterFoods(int category) {
-    List<Food> filteredFoods = [];
 
-    if (category < -99) {
-      switch (category) {
-        case -100: // All foods
-          filteredFoods = List.from(_storedAllFoods);
-          break;
-        case -200: // Special foods
-          filteredFoods = _storedAllFoods.where((food) => food.fdIsSpecial == 'true').toList();
-          break;
-        case -300: // Today's foods
-          filteredFoods = _storedAllFoods.where((food) => food.fdIsToday == 'true').toList();
-          break;
-        case -400: // Available foods
-          filteredFoods = _storedAllFoods.where((food) => food.fdIsAvailable == 'true').toList();
-          break;
-        case -500: // Quick foods
-          filteredFoods = _storedAllFoods.where((food) => food.fdIsQuick == 'true').toList();
-          break;
-        default:
-          filteredFoods = [];
-      }
-    } else {
-      // Categories from server
-      filteredFoods = _storedAllFoods.where((food) => food.fdCategory == category).toList();
-    }
-    _myAllOfferFoods.clear();
-    _myAllOfferFoods.addAll(filteredFoods);
-    update();
-  }
 
 
 

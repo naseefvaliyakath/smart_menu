@@ -9,7 +9,9 @@ import '../../constants/url.dart';
 
 class DioClient extends GetxController{
   //? secure storage for saving token
-  FlutterSecureStorage storage = const FlutterSecureStorage();
+  FlutterSecureStorage storage = const FlutterSecureStorage(aOptions: AndroidOptions(
+    encryptedSharedPreferences: true,
+  ));
   Dio _dio = Dio();
   String token = '';
 
@@ -31,6 +33,7 @@ class DioClient extends GetxController{
     try {
       response = await _dio.get(url);
     } on DioException catch (e) {
+      print(e);
       throw Exception(e.type);
     } catch (e) {
       rethrow;

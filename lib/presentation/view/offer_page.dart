@@ -68,6 +68,7 @@ class OfferPage extends StatelessWidget {
                               return InkWell(
                                 onTap: () {
                                   FlexibleBtnBottomSheet.bottomSheet(
+                                    context: context,
                                     b1Name: 'Edit Offer',
                                     b2Name: 'Remove Offer',
                                     b3Name: 'Close',
@@ -94,6 +95,10 @@ class OfferPage extends StatelessWidget {
                                   priceThreeByTwo: ctrl.myAllFoods[index].fdThreeBiTwoPrsPrice ?? 0,
                                   priceHalf: ctrl.myAllFoods[index].fdHalfPrice ?? 0,
                                   priceQuarter: ctrl.myAllFoods[index].fdQtrPrice ?? 0,
+                                  fullPrsTagName: ctrl.myAllFoods[index].fullPrsName ?? 'Full',
+                                  threeByTwoPrsName: ctrl.myAllFoods[index].thrByToPrsName ?? '3/4',
+                                  halfPrsName: ctrl.myAllFoods[index].halfPrsName ?? 'Half',
+                                  quarterPrsName: ctrl.myAllFoods[index].qtrPrsName ?? 'Quarter',
                                   fdIsLoos: ctrl.myAllFoods[index].fdIsLoos ?? 'false',
                                   offerPrice: ctrl.myAllFoods[index].fdOffFullPrice ?? 0,
                                   offerPriceThreeByTwo: ctrl.myAllFoods[index].fdOffThreeByTwoPrice ?? 0,

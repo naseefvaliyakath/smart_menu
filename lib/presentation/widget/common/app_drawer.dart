@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:smart_menu/core/routes/app_pages.dart';
+import 'package:smart_menu/presentation/view/profile_page.dart';
 import '../../../constants/colors/app_colors.dart';
-
+import '../../view/startup_video_tutorial.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -9,9 +13,7 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-
       child: ListView(
-
         padding: EdgeInsets.zero,
         children: <Widget>[
           UserAccountsDrawerHeader(
@@ -54,18 +56,26 @@ class AppDrawer extends StatelessWidget {
             title: Text('Profile', style: TextStyle(fontSize: 16.sp)),
             onTap: () {
               Navigator.pop(context);
-
+              Get.to(ProfilePage());
             },
           ),
           ListTile(
-            leading: Icon(Icons.add_business_rounded, size: 20.sp),
-            title: Text('Products', style: TextStyle(fontSize: 16.sp)),
+            leading: Icon(Icons.contact_support, size: 20.sp),
+            title: Text('Contact Us', style: TextStyle(fontSize: 16.sp)),
             onTap: () {
               Navigator.pop(context);
-
             },
           ),
 
+          ListTile(
+            leading: Icon(Icons.price_change_rounded, size: 20.sp),
+            title: Text('Pricing', style: TextStyle(fontSize: 16.sp)),
+            onTap: () {
+              Navigator.pop(context);
+              Get.toNamed(AppPages.PAYMENT_MODE_PAGE);
+
+            },
+          ),
         ],
       ),
     );

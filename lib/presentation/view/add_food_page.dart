@@ -9,8 +9,10 @@ import 'package:image_picker/image_picker.dart';
 import '../../constants/app_constant_names.dart';
 import '../../constants/colors/app_colors.dart';
 import '../alert/food_gallery_alert.dart';
+import '../alert/single_txt_alert.dart';
 import '../alert/two_function_alert.dart';
 import '../controller/add_food_controller.dart';
+import '../widget/card_for_price_tag.dart';
 import '../widget/common/add_category_card.dart';
 import '../widget/common/add_catogory_card_text_field.dart';
 import '../widget/common/buttons/round_border_button.dart';
@@ -164,7 +166,6 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                                               : CrossFadeState.showSecond;
                                                         },
                                                         nameController: ctrl.categoryNameTD,
-
                                                         height: 60.h,
                                                       ),
                                                 duration: const Duration(seconds: 1),
@@ -192,6 +193,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                         },
                                         choseFileEvent: () {
                                           FlexibleBtnBottomSheet.bottomSheet(
+                                              context: context,
                                               b1Name: 'From Gallery',
                                               b2Name: 'From Camara',
                                               b3Name: 'From Collection',
@@ -206,6 +208,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                     : InkWell(
                                         onTap: () {
                                           FlexibleBtnBottomSheet.bottomSheet(
+                                              context: context,
                                               b1Name: 'From Gallery',
                                               b2Name: 'From Camara',
                                               b3Name: 'From Collection',
@@ -295,65 +298,153 @@ class _AddFoodPageState extends State<AddFoodPage> {
                                   secondChild: Row(
                                     children: [
                                       Expanded(
-                                        child: TextFieldWidget(
-                                          isNumberOnly: true,
-                                          keyboardType:
-                                              const TextInputType.numberWithOptions(decimal: true, signed: true),
-                                          hintText: 'Full',
-                                          txtLength: 8,
-                                          textEditingController: ctrl.fdFullPriceTD,
-                                          focusNode: ctrl.fullPriceFocusNode,
-                                          borderRadius: 15.r,
-                                          requiredField: ctrl.priceToggle,
-                                          onSubmit: (_) {
-                                            FocusScope.of(context).requestFocus(ctrl.threeBiTwoPrsFocusNode);
-                                          },
-                                          onChange: (_) {},
+                                        child: Column(
+                                          children: [
+                                            BeautifulStripCard(
+                                              text: ctrl.fullPriceName,
+                                              onTap: () {
+                                                singleTxtAlert(
+                                                    context: context,
+                                                    hintText: 'Enter Name',
+                                                    title: 'Edit Name',
+                                                    maxLetter: 8,
+                                                    tCtrl: ctrl.fullPrsNameTD,
+                                                    onTap: () {
+                                                      ctrl.updatePriceTagName();
+                                                      Navigator.pop(context);
+                                                    },
+                                                    onPopupDismissing: () {
+                                                      ctrl.clearPriceTagNameCtrlOnly();
+                                                    });
+                                              },
+                                            ),
+                                            TextFieldWidget(
+                                              isNumberOnly: true,
+                                              keyboardType:
+                                                  const TextInputType.numberWithOptions(decimal: true, signed: true),
+                                              hintText: ctrl.fullPriceName,
+                                              txtLength: 8,
+                                              textEditingController: ctrl.fdFullPriceTD,
+                                              focusNode: ctrl.fullPriceFocusNode,
+                                              borderRadius: 15.r,
+                                              requiredField: ctrl.priceToggle,
+                                              onSubmit: (_) {
+                                                FocusScope.of(context).requestFocus(ctrl.threeBiTwoPrsFocusNode);
+                                              },
+                                              onChange: (_) {},
+                                            ),
+                                          ],
                                         ),
                                       ),
                                       Expanded(
-                                        child: TextFieldWidget(
-                                          isNumberOnly: true,
-                                          keyboardType:
-                                              const TextInputType.numberWithOptions(decimal: true, signed: true),
-                                          hintText: '3/4',
-                                          txtLength: 8,
-                                          textEditingController: ctrl.fdThreeBiTwoPrsTD,
-                                          focusNode: ctrl.threeBiTwoPrsFocusNode,
-                                          onSubmit: (_) {
-                                            FocusScope.of(context).requestFocus(ctrl.halfPriceFocusNode);
-                                          },
-                                          borderRadius: 15.r,
-                                          onChange: (_) {},
+                                        child: Column(
+                                          children: [
+                                            BeautifulStripCard(
+                                              text: ctrl.threeBiTwoPriceName,
+                                              onTap: () {
+                                                singleTxtAlert(
+                                                    context: context,
+                                                    hintText: 'Enter Name',
+                                                    title: 'Edit Name',
+                                                    tCtrl: ctrl.thrByToPrsNameTD,
+                                                    maxLetter: 8,
+                                                    onTap: () {
+                                                      ctrl.updatePriceTagName();
+                                                      Navigator.pop(context);
+                                                    },
+                                                    onPopupDismissing: () {
+                                                      ctrl.clearPriceTagNameCtrlOnly();
+                                                    });
+                                              },
+                                            ),
+                                            TextFieldWidget(
+                                              isNumberOnly: true,
+                                              keyboardType:
+                                                  const TextInputType.numberWithOptions(decimal: true, signed: true),
+                                              hintText: ctrl.threeBiTwoPriceName,
+                                              txtLength: 8,
+                                              textEditingController: ctrl.fdThreeBiTwoPrsTD,
+                                              focusNode: ctrl.threeBiTwoPrsFocusNode,
+                                              onSubmit: (_) {
+                                                FocusScope.of(context).requestFocus(ctrl.halfPriceFocusNode);
+                                              },
+                                              borderRadius: 15.r,
+                                              onChange: (_) {},
+                                            ),
+                                          ],
                                         ),
                                       ),
                                       Expanded(
-                                        child: TextFieldWidget(
-                                          isNumberOnly: true,
-                                          keyboardType:
-                                              const TextInputType.numberWithOptions(decimal: true, signed: true),
-                                          hintText: 'Half',
-                                          txtLength: 8,
-                                          textEditingController: ctrl.fdHalfPriceTD,
-                                          borderRadius: 15.r,
-                                          focusNode: ctrl.halfPriceFocusNode,
-                                          onSubmit: (_) {
-                                            FocusScope.of(context).requestFocus(ctrl.qtrPriceFocusNode);
-                                          },
-                                          onChange: (_) {},
+                                        child: Column(
+                                          children: [
+                                            BeautifulStripCard(
+                                              text: ctrl.halfPriceName,
+                                              onTap: () {
+                                                singleTxtAlert(
+                                                    context: context,
+                                                    hintText: 'Enter Name',
+                                                    title: 'Edit Name',
+                                                    tCtrl: ctrl.halfPrsNameTD,
+                                                    maxLetter: 8,
+                                                    onTap: () {
+                                                      ctrl.updatePriceTagName();
+                                                      Navigator.pop(context);
+                                                    },
+                                                    onPopupDismissing: () {
+                                                      ctrl.clearPriceTagNameCtrlOnly();
+                                                    });
+                                              },
+                                            ),
+                                            TextFieldWidget(
+                                              isNumberOnly: true,
+                                              keyboardType:
+                                                  const TextInputType.numberWithOptions(decimal: true, signed: true),
+                                              hintText: ctrl.halfPriceName,
+                                              txtLength: 8,
+                                              textEditingController: ctrl.fdHalfPriceTD,
+                                              borderRadius: 15.r,
+                                              focusNode: ctrl.halfPriceFocusNode,
+                                              onSubmit: (_) {
+                                                FocusScope.of(context).requestFocus(ctrl.qtrPriceFocusNode);
+                                              },
+                                              onChange: (_) {},
+                                            ),
+                                          ],
                                         ),
                                       ),
                                       Expanded(
-                                        child: TextFieldWidget(
-                                          isNumberOnly: true,
-                                          keyboardType:
-                                              const TextInputType.numberWithOptions(decimal: true, signed: true),
-                                          hintText: 'Quarter',
-                                          txtLength: 8,
-                                          textEditingController: ctrl.fdQtrPriceTD,
-                                          focusNode: ctrl.qtrPriceFocusNode,
-                                          borderRadius: 15.r,
-                                          onChange: (_) {},
+                                        child: Column(
+                                          children: [
+                                            BeautifulStripCard(
+                                              text: ctrl.qtrPriceName,
+                                              onTap: () {
+                                                singleTxtAlert(
+                                                    context: context,
+                                                    hintText: 'Enter Name',
+                                                    title: 'Edit Name',
+                                                    tCtrl: ctrl.qtrPrsNameTD,
+                                                    maxLetter: 8,
+                                                    onTap: () {
+                                                      ctrl.updatePriceTagName();
+                                                      Navigator.pop(context);
+                                                    },
+                                                    onPopupDismissing: () {
+                                                      ctrl.clearPriceTagNameCtrlOnly();
+                                                    });
+                                              },
+                                            ),
+                                            TextFieldWidget(
+                                              isNumberOnly: true,
+                                              keyboardType:
+                                                  const TextInputType.numberWithOptions(decimal: true, signed: true),
+                                              hintText: ctrl.qtrPriceName,
+                                              txtLength: 8,
+                                              textEditingController: ctrl.fdQtrPriceTD,
+                                              focusNode: ctrl.qtrPriceFocusNode,
+                                              borderRadius: 15.r,
+                                              onChange: (_) {},
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],
@@ -406,7 +497,8 @@ class _AddFoodPageState extends State<AddFoodPage> {
   }
 
   void _getFromGallery() async {
-    XFile? pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: 1080, maxHeight: 1080,imageQuality: 10);
+    XFile? pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery, maxWidth: 1080, maxHeight: 1080, imageQuality: 10);
     _cropImage(pickedFile!.path);
     Navigator.pop(context);
   }

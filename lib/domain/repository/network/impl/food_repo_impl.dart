@@ -128,7 +128,7 @@ class FoodRepositoryImpl implements FoodRepository {
         'id': food.id,
         'fdIsToday': food.fdIsToday,
         'fdIsAvailable': food.fdIsAvailable,
-        'fdIsSpecial': food.fdIsSpecial,
+        'fdIsHide': food.fdIsHide,
         'offer': food.offer,
         'fdIsQuick': food.fdIsQuick,
         'shopId': food.shopId,

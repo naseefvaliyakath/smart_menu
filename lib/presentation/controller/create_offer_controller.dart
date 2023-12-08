@@ -1,6 +1,11 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart' hide ThemeMode;
+import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart' hide Response;
+import 'package:smart_menu/data/network/dio_client.dart';
+import 'package:smart_menu/presentation/controller/login_controller.dart';
 import 'package:smart_menu/presentation/controller/offer_page_controller.dart';
 import '../../constants/app_constant_names.dart';
 import '../../core/routes/app_pages.dart';
@@ -8,7 +13,6 @@ import '../../data/model/api_response/api_response.dart';
 import '../../data/model/food/food.dart';
 import '../../domain/repository/network/contract/food_repository.dart';
 import '../widget/snack_bar.dart';
-
 
 class CreateOfferController extends GetxController {
   final offerFormKey = GlobalKey<FormState>();
@@ -49,7 +53,6 @@ class CreateOfferController extends GetxController {
     }
   }
 
-
   Future<bool> updateOffer() async {
     try {
       if (offerFormKey.currentState!.validate()) {
@@ -64,8 +67,18 @@ class CreateOfferController extends GetxController {
           0,
           0,
           0,
+          'Full',
+          //?full price name      NO EFFECT
+          '3/4',
+          //?3/2 price name       NO EFFECT
+          'Half',
+          //?half price name      NO EFFECT
+          'Quarter',
+          //?Quarter price name  NO EFFECT
           fdOffFullPriceTD.text.isEmpty ? offerFood?.fdOffFullPrice : (double.tryParse(fdOffFullPriceTD.text) ?? 0),
-          fdOffThreeBiTwoPrsTD.text.isEmpty ? offerFood?.fdOffThreeByTwoPrice : (double.tryParse(fdOffThreeBiTwoPrsTD.text) ?? 0),
+          fdOffThreeBiTwoPrsTD.text.isEmpty
+              ? offerFood?.fdOffThreeByTwoPrice
+              : (double.tryParse(fdOffThreeBiTwoPrsTD.text) ?? 0),
           fdOffHalfPriceTD.text.isEmpty ? offerFood?.fdOffHalfPrice : (double.tryParse(fdOffHalfPriceTD.text) ?? 0),
           fdOffQtrPriceTD.text.isEmpty ? offerFood?.fdOffQtrPrice : (double.tryParse(fdOffQtrPriceTD.text) ?? 0),
           fdOffNameTD.text,
@@ -95,7 +108,7 @@ class CreateOfferController extends GetxController {
             return true;
           }
         } else {
-        //?  AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+          //?  AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
           return false;
         }
       } else {
@@ -110,7 +123,6 @@ class CreateOfferController extends GetxController {
     }
   }
 
-
   clearFields() {
     fdOffNameTD.text = '';
     fdOffFullPriceTD.text = '';
@@ -119,7 +131,6 @@ class CreateOfferController extends GetxController {
     fdOffQtrPriceTD.text = '';
     update();
   }
-
 
   initTxtCtrl() {
     fdOffNameTD = TextEditingController();
@@ -146,5 +157,6 @@ class CreateOfferController extends GetxController {
     isLoading = false;
     update();
   }
+
 
 }

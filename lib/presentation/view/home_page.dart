@@ -10,6 +10,7 @@ import '../widget/common/app_drawer.dart';
 import '../widget/common/common_text/heading_rich_text.dart';
 import '../widget/common/dashboard_card.dart';
 import '../widget/common/notification_icon.dart';
+import 'setup_qr_stand/customize_qr_stand.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -33,7 +34,9 @@ class HomePage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Scaffold.of(context).openDrawer();
+                          },
                           icon: Icon(
                             Icons.menu,
                             size: 34.sp,
@@ -68,11 +71,10 @@ class HomePage extends StatelessWidget {
                           } else if (index == 3) {
                             Get.toNamed(AppPages.OFFER_PAGE);
                           } else if (index == 4) {
-                            const storage = FlutterSecureStorage();
-                            storage.delete(key: KEY_TOKEN);
+                            Get.toNamed(AppPages.WEB_MENU_PAGE);
                           } else if (index == 5) {
                             const storage = FlutterSecureStorage();
-                            String? aa = await storage.read(key: KEY_TOKEN);
+                            String? aa = await storage.read(key: KEY_STARTUP_TUTORIAL);
                             print(aa);
                           }
                         },

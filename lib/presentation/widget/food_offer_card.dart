@@ -14,6 +14,10 @@ class OfferFoodCard extends StatelessWidget {
   final double offerPriceThreeByTwo;
   final double offerPriceHalf;
   final double offerPriceQuarter;
+  final String fullPrsTagName;
+  final String threeByTwoPrsName;
+  final String halfPrsName;
+  final String quarterPrsName;
   final String offerName;
   final String fdIsLoos;
 
@@ -30,7 +34,7 @@ class OfferFoodCard extends StatelessWidget {
     required this.priceThreeByTwo,
     required this.priceHalf,
     required this.priceQuarter,
-    required this.fdIsLoos
+    required this.fdIsLoos, required this.fullPrsTagName, required this.threeByTwoPrsName, required this.halfPrsName, required this.quarterPrsName
   }) : super(key: key);
 
   Widget _buildPrice(String label, double originalPrice, double offerPrice,{bool isLoos = false}) {
@@ -131,11 +135,11 @@ class OfferFoodCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  _buildPrice( fdIsLoos == 'false' ? 'Price' : 'Full', price, offerPrice,isLoos: true),
+                  _buildPrice( fdIsLoos == 'false' ? 'Price' : fullPrsTagName, price, offerPrice,isLoos: true),
                   if (fdIsLoos == 'true') ...[
-                    _buildPrice('3 by 4', priceThreeByTwo, offerPriceThreeByTwo),
-                    _buildPrice('Half', priceHalf, offerPriceHalf),
-                    _buildPrice('Quarter', priceQuarter, offerPriceQuarter),
+                    _buildPrice(threeByTwoPrsName, priceThreeByTwo, offerPriceThreeByTwo),
+                    _buildPrice(halfPrsName, priceHalf, offerPriceHalf),
+                    _buildPrice(quarterPrsName, priceQuarter, offerPriceQuarter),
                   ],
                   15.verticalSpace,
                 ],

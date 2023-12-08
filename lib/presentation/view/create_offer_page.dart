@@ -79,6 +79,10 @@ class CreateOfferPage extends StatelessWidget {
                                   priceThreeByTwo:ctrl.offerFood?.fdThreeBiTwoPrsPrice ?? 0,
                                   priceHalf: ctrl.offerFood?.fdHalfPrice ?? 0,
                                   priceQuarter: ctrl.offerFood?.fdQtrPrice ?? 0,
+                                  fullPrsTagName: ctrl.offerFood?.fullPrsName ?? 'Full',
+                                  threeByTwoPrsName: ctrl.offerFood?.thrByToPrsName ?? '3/4',
+                                  halfPrsName: ctrl.offerFood?.halfPrsName ?? 'Half',
+                                  quarterPrsName: ctrl.offerFood?.qtrPrsName ?? 'Quarter',
                                   fdIsLoos: ctrl.offerFood?.fdIsLoos ?? 'false',
                                   offerPrice: ctrl.offerFood?.fdOffFullPrice ?? 0,
                                   offerPriceThreeByTwo: ctrl.offerFood?.fdOffThreeByTwoPrice ?? 0,
@@ -140,7 +144,7 @@ class CreateOfferPage extends StatelessWidget {
                                                   isNumberOnly: true,
                                                   keyboardType:
                                                       const TextInputType.numberWithOptions(decimal: true, signed: true),
-                                                  hintText: 'Full',
+                                                  hintText: ctrl.offerFood?.fullPrsName ?? 'Full',
                                                   textEditingController: ctrl.fdOffFullPriceTD,
                                                   borderRadius: 15.r,
                                                   requiredField: true,
@@ -157,7 +161,7 @@ class CreateOfferPage extends StatelessWidget {
                                                   isNumberOnly: true,
                                                   keyboardType:
                                                       const TextInputType.numberWithOptions(decimal: true, signed: true),
-                                                  hintText: '3/4',
+                                                  hintText: ctrl.offerFood?.thrByToPrsName ?? '3/4',
                                                   textEditingController: ctrl.fdOffThreeBiTwoPrsTD,
                                                   borderRadius: 15.r,
                                                   onChange: (_) {},
@@ -173,7 +177,7 @@ class CreateOfferPage extends StatelessWidget {
                                                   isNumberOnly: true,
                                                   keyboardType:
                                                       const TextInputType.numberWithOptions(decimal: true, signed: true),
-                                                  hintText: 'Half',
+                                                  hintText: ctrl.offerFood?.halfPrsName ?? 'Half',
                                                   textEditingController: ctrl.fdOffHalfPriceTD,
                                                   borderRadius: 15.r,
                                                   onChange: (_) {},
@@ -189,7 +193,7 @@ class CreateOfferPage extends StatelessWidget {
                                                   isNumberOnly: true,
                                                   keyboardType:
                                                       const TextInputType.numberWithOptions(decimal: true, signed: true),
-                                                  hintText: 'Quarter',
+                                                  hintText: ctrl.offerFood?.qtrPrsName ?? 'Quarter',
                                                   textEditingController: ctrl.fdOffQtrPriceTD,
                                                   borderRadius: 15.r,
                                                   onChange: (_) {},
@@ -214,7 +218,7 @@ class CreateOfferPage extends StatelessWidget {
                                             width: 0.9.sw,
                                             borderRadius: 20.r,
                                             onTap: () async {
-                                              ctrl.updateOffer();
+                                             ctrl.updateOffer();
                                             },
                                           )),
                                 20.verticalSpace,

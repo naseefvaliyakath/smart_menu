@@ -31,6 +31,18 @@ class Food {
   @JsonKey(name: "fdQtrPrice")
   double? fdQtrPrice;
 
+  @JsonKey(name: "fullPrsName")
+  String? fullPrsName;
+
+  @JsonKey(name: "thrByToPrsName")
+  String? thrByToPrsName;
+
+  @JsonKey(name: "halfPrsName")
+  String? halfPrsName;
+
+  @JsonKey(name: "qtrPrsName")
+  String? qtrPrsName;
+
   @JsonKey(name: "fdOffFullPrice")
   double? fdOffFullPrice;
 
@@ -42,6 +54,7 @@ class Food {
 
   @JsonKey(name: "fdOffQtrPrice")
   double? fdOffQtrPrice;
+
 
   @JsonKey(name: "offerName")
   String? offerName;
@@ -64,8 +77,8 @@ class Food {
   @JsonKey(name: "fdIsAvailable")
   String? fdIsAvailable;
 
-  @JsonKey(name: "fdIsSpecial")
-  String? fdIsSpecial;
+  @JsonKey(name: "fdIsHide")
+  String? fdIsHide;
 
   @JsonKey(name: "offer")
   String? offer;
@@ -87,6 +100,10 @@ class Food {
       this.fdThreeBiTwoPrsPrice,
       this.fdHalfPrice,
       this.fdQtrPrice,
+      this.fullPrsName,
+      this.thrByToPrsName,
+      this.halfPrsName,
+      this.qtrPrsName,
       this.fdOffFullPrice,
       this.fdOffThreeByTwoPrice,
       this.fdOffHalfPrice,
@@ -98,7 +115,7 @@ class Food {
       this.fdIsToday,
       this.fdIsQuick,
       this.fdIsAvailable,
-      this.fdIsSpecial,
+      this.fdIsHide,
       this.offer,
       this.createdAt,
       this.updatedAt);
@@ -125,7 +142,7 @@ class Food {
         fdIsToday = other.fdIsToday,
         fdIsQuick = other.fdIsQuick,
         fdIsAvailable = other.fdIsAvailable,
-        fdIsSpecial = other.fdIsSpecial,
+        fdIsHide = other.fdIsHide,
         offer = other.offer,
         createdAt = other.createdAt,
         updatedAt = other.updatedAt;
