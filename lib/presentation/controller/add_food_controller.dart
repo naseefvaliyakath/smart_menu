@@ -1,6 +1,8 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart' hide Response;
+import 'package:showcaseview/showcaseview.dart';
 import 'package:smart_menu/core/routes/app_pages.dart';
 import 'package:smart_menu/domain/repository/network/contract/category_repository.dart';
 import 'package:smart_menu/presentation/controller/login_controller.dart';
@@ -10,11 +12,28 @@ import '../../constants/url.dart';
 import '../../data/model/api_response/api_response.dart';
 import '../../data/model/category/category.dart';
 import '../../data/model/food/food.dart';
+import '../../data/network/handle_error.dart';
 import '../../domain/repository/network/contract/food_repository.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
+import '../alert/renew_plan_alert.dart';
+import '../alert/two_function_alert.dart';
+import '../alert/update_notice_alert.dart';
+
 class AddFoodController extends GetxController {
+  final GlobalKey showcaseAddCategory = GlobalKey();
+  final GlobalKey showcaseMultiplePrice = GlobalKey();
+  final GlobalKey showcaseMultiplePriceNameCard = GlobalKey();
+  final GlobalKey showcaseUploadFoodImg = GlobalKey();
+  final GlobalKey showcaseEnterFoodDetails = GlobalKey();
+  final GlobalKey showcaseSubmitFood = GlobalKey();
+
+  final GlobalKey showCaseBottomSheetFromGallery = GlobalKey();
+  final GlobalKey showCaseBottomSheetFromCam = GlobalKey();
+  final GlobalKey showCaseBottomSheetFromCollection = GlobalKey();
+
   final foodFormKey = GlobalKey<FormState>();
+
   FoodRepository foodRepository = Get.find<FoodRepository>();
   CategoryRepository categoryRepository = Get.find<CategoryRepository>();
 
@@ -35,10 +54,10 @@ class AddFoodController extends GetxController {
   late TextEditingController fdQtrPriceTD;
 
   //? priceTypeName
-   String fullPriceName = 'Full';
-   String threeBiTwoPriceName= '3/4';
-   String halfPriceName= 'Half';
-   String qtrPriceName= 'Quarter';
+  String fullPriceName = 'Full';
+  String threeBiTwoPriceName = '3/4';
+  String halfPriceName = 'Half';
+  String qtrPriceName = 'Quarter';
 
   //? price-tag txt controllers
   late TextEditingController fullPrsNameTD;
@@ -114,7 +133,8 @@ class AddFoodController extends GetxController {
         setFoodDetailsIfUpdate(foodToUpdate);
       }
     } catch (e) {
-      print(e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'add_food_controller', method: 'handleFoodArguments');
+      return;
     }
   }
 
@@ -129,7 +149,8 @@ class AddFoodController extends GetxController {
       }
       update();
     } catch (e) {
-      print(e);
+      ErrorHandler.handleError(e, isDioError: false, page: 'add_food_controller', method: 'loadImage');
+      return;
     }
   }
 
@@ -141,40 +162,42 @@ class AddFoodController extends GetxController {
           return false;
         }
         Food food = Food(
-          isUpdate ? (foodToUpdate?.id ?? 0) : 0,
-          Get.find<LoginController>().myShop.shopId,
-          fdNameTD.text,
-          fdDescriptionTD.text,
-          selectedCategory,
-          priceToggle ? (double.tryParse(fdFullPriceTD.text) ?? 0) : (double.tryParse(fdPriceTD.text) ?? 0),
-          fdThreeBiTwoPrsTD.text.isEmpty ? 0 : (double.tryParse(fdThreeBiTwoPrsTD.text) ?? 0),
-          fdHalfPriceTD.text.isEmpty ? 0 : (double.tryParse(fdHalfPriceTD.text) ?? 0),
-          fdQtrPriceTD.text.isEmpty ? 0 : (double.tryParse(fdQtrPriceTD.text) ?? 0),
-          fullPriceName,   //?full price name
-          threeBiTwoPriceName,    //?3/2 price name
-          halfPriceName,   //?half price name
-          qtrPriceName, //?Quarter price name
-          0,
-          //? offer price set in server side
-          0,
-          //? offer price set in server side
-          0,
-          //? offer price set in server side
-          0,
-          //? offer price set in server side
-          'No Offer',
-          //? offer name will set when offer creating
-          priceToggle.toString(),
-          0,
-          isUpdate ? (galleryImgLink ?? (foodToUpdate?.fdImg ?? IMG_LINK)) : galleryImgLink,
-          isUpdate ? (foodToUpdate?.fdIsToday ?? 'false') : 'false',
-          isUpdate ? (foodToUpdate?.fdIsQuick ?? 'false') : 'false',
-          isUpdate ? (foodToUpdate?.fdIsAvailable ?? 'true') : 'true',
-          isUpdate ? (foodToUpdate?.fdIsHide ?? 'false') : 'false',
-          isUpdate ? (foodToUpdate?.offer ?? 'false') : 'false',
-          DateTime.now().toString(),
-          DateTime.now().toString(),
+          id: isUpdate ? (foodToUpdate?.id ?? 0) : 0,
+          shopId: Get.find<LoginController>().myShop.shopId,
+          fdName: fdNameTD.text,
+          foodDescription: fdDescriptionTD.text,
+          fdCategory: selectedCategory,
+          fdFullPrice:
+              priceToggle ? (double.tryParse(fdFullPriceTD.text) ?? 0) : (double.tryParse(fdPriceTD.text) ?? 0),
+          fdThreeBiTwoPrsPrice: fdThreeBiTwoPrsTD.text.isEmpty ? 0 : (double.tryParse(fdThreeBiTwoPrsTD.text) ?? 0),
+          fdHalfPrice: fdHalfPriceTD.text.isEmpty ? 0 : (double.tryParse(fdHalfPriceTD.text) ?? 0),
+          fdQtrPrice: fdQtrPriceTD.text.isEmpty ? 0 : (double.tryParse(fdQtrPriceTD.text) ?? 0),
+          fullPrsName: fullPriceName,
+          thrByToPrsName: threeBiTwoPriceName,
+          halfPrsName: halfPriceName,
+          qtrPrsName: qtrPriceName,
+          fdOffFullPrice: 0,
+          // offer price set in server side
+          fdOffThreeByTwoPrice: 0,
+          // offer price set in server side
+          fdOffHalfPrice: 0,
+          // offer price set in server side
+          fdOffQtrPrice: 0,
+          // offer price set in server side
+          offerName: 'No Offer',
+          // offer name will set when offer creating
+          fdIsLoos: priceToggle.toString(),
+          cookTime: 0,
+          fdImg: isUpdate ? (galleryImgLink ?? (foodToUpdate?.fdImg ?? IMG_LINK)) : galleryImgLink,
+          fdIsToday: isUpdate ? (foodToUpdate?.fdIsToday ?? 'false') : 'false',
+          fdIsQuick: isUpdate ? (foodToUpdate?.fdIsQuick ?? 'false') : 'false',
+          fdIsAvailable: isUpdate ? (foodToUpdate?.fdIsAvailable ?? 'true') : 'true',
+          fdIsHide: isUpdate ? (foodToUpdate?.fdIsHide ?? 'false') : 'false',
+          offer: isUpdate ? (foodToUpdate?.offer ?? 'false') : 'false',
+          createdAt: DateTime.now().toString(),
+          updatedAt: DateTime.now().toString(),
         );
+
         showLoading();
         ApiResponse<Food>? apiResponse;
         if (!isUpdate) {
@@ -186,6 +209,7 @@ class AddFoodController extends GetxController {
         }
         if (apiResponse != null) {
           if (apiResponse.error) {
+            checkAndRenewPlanAlert(apiResponse.message);
             AppSnackBar.errorSnackBar('Error', apiResponse.message);
             return false;
           } else {
@@ -205,7 +229,8 @@ class AddFoodController extends GetxController {
         return false;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', e.toString());
+      //?  AppSnackBar.errorSnackBar('Error', e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'add_food_controller', method: 'submitFood');
       return false;
     } finally {
       hideLoading();
@@ -224,10 +249,17 @@ class AddFoodController extends GetxController {
         fdThreeBiTwoPrsTD.text = food.fdThreeBiTwoPrsPrice.toString();
         fdHalfPriceTD.text = food.fdHalfPrice.toString();
         fdQtrPriceTD.text = food.fdQtrPrice.toString();
+
+        fullPriceName = food.fullPrsName ?? 'Full';
+        threeBiTwoPriceName = food.thrByToPrsName ?? '3/4';
+        halfPriceName = food.halfPrsName ?? 'Half';
+        qtrPriceName = food.qtrPrsName ?? 'Quarter';
         update();
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', e.toString());
+      //? AppSnackBar.errorSnackBar('Error', e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'add_food_controller', method: 'setFoodDetailsIfUpdate');
+      return;
     }
   }
 
@@ -262,6 +294,7 @@ class AddFoodController extends GetxController {
         ApiResponse<Category>? apiResponse = await categoryRepository.addCategory(category);
         if (apiResponse != null) {
           if (apiResponse.error) {
+            checkAndRenewPlanAlert(apiResponse.message);
             AppSnackBar.errorSnackBar('Error', apiResponse.message);
             return false;
           } else {
@@ -278,6 +311,7 @@ class AddFoodController extends GetxController {
         AppSnackBar.errorSnackBar('Error', 'Pleas Enter Name');
       }
     } catch (e) {
+      ErrorHandler.handleError(e, isDioError: false, page: 'add_food_controller', method: 'insertCategory');
       return;
     } finally {
       hideAddCategoryLoading();
@@ -314,7 +348,8 @@ class AddFoodController extends GetxController {
         return false;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+      ErrorHandler.handleError(e, isDioError: false, page: 'add_food_controller', method: 'getAllCategory');
+      return;
     } finally {
       hideLoadingCategoryLoading();
       update();
@@ -340,8 +375,8 @@ class AddFoodController extends GetxController {
         return false;
       }
     } catch (e) {
-      rethrow;
-      AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+      ErrorHandler.handleError(e, isDioError: false, page: 'add_food_controller', method: 'deleteCategory');
+      return;
     } finally {
       hideLoadingCategoryLoading();
       update();
@@ -354,8 +389,6 @@ class AddFoodController extends GetxController {
     update();
   }
 
-
-
   void updatePriceTagName() {
     fullPriceName = fullPrsNameTD.text.isNotEmpty ? fullPrsNameTD.text : fullPriceName;
     threeBiTwoPriceName = thrByToPrsNameTD.text.isNotEmpty ? thrByToPrsNameTD.text : threeBiTwoPriceName;
@@ -366,16 +399,12 @@ class AddFoodController extends GetxController {
 
   //? to call when popup classing
   //? else the text will remain in controller
-  clearPriceTagNameCtrlOnly(){
+  clearPriceTagNameCtrlOnly() {
     fullPrsNameTD.text = '';
     thrByToPrsNameTD.text = '';
     halfPrsNameTD.text = '';
     qtrPrsNameTD.text = '';
   }
-
-
-
-
 
   //?to clear value after toggle off
   void clearLoosPrice() {

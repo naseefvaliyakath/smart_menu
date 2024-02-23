@@ -3,8 +3,6 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:smart_menu/core/routes/app_pages.dart';
-import 'package:smart_menu/presentation/view/setup_qr_stand/paper_purchase_page.dart';
-import 'package:smart_menu/presentation/view/setup_qr_stand/stand_purchase_page.dart';
 import 'package:smart_menu/presentation/widget/common/common_text/big_text.dart';
 import '../../widget/common/image_tile.dart';
 
@@ -37,7 +35,7 @@ class StepsForQrStand extends StatelessWidget {
             ),
             ImageTile(
               index: '2',
-              imageUrl: 'assets/image/acrilic_stand.png',
+              imageUrl: 'assets/image/qr_stand_black.jpeg',
               title: 'Buy Table Stand',
               subtitle: 'Click to find QR Table stand purchase link',
               onTap: () {
@@ -50,7 +48,7 @@ class StepsForQrStand extends StatelessWidget {
               title: 'Past your QR Code Design In Stand',
               subtitle: 'Click to learn how to print and past design',
               onTap: () {
-                Get.toNamed(AppPages.PAPER_PURCHASE_PAGE);
+                Get.toNamed(AppPages.FINALIZE_QR_STAND_PAGE);
               },
             ),
           ],

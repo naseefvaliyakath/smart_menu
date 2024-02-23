@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart' hide Response;
+import '../../data/model/shop/shop.dart';
 import '../../data/network/dio_client.dart';
+import '../../data/network/handle_error.dart';
 import 'login_controller.dart';
 
 
@@ -35,13 +36,16 @@ class PaymentModesController extends GetxController {
 
       Stripe.publishableKey = publishableKey;
       BillingDetails billingDetails =  BillingDetails(
+        email: 'naseefvs1@gmail.com',
+        phone: '55942387',
+        name: 'naseef',
         address: Address(
-          country: 'IN',
+          country: 'QA',
           city: '${Get.find<LoginController>().myShop.district}',
-          line1: 'addr1',
-          line2: 'addr2',
-          postalCode: '680681',
-          state: 'kerala',
+          line1: 'taboo ha-moor',
+          line2: 'new elusive',
+          postalCode: '00000',
+          state: 'dhoha',
           // Other address details
         ),
         // Other billing details
@@ -64,7 +68,6 @@ class PaymentModesController extends GetxController {
       );
 
       await Stripe.instance.presentPaymentSheet().then((value) {
-        print('success');
       }).onError((error, stackTrace) {
         if (error is StripeException) {
           ScaffoldMessenger.of(Get.context!).showSnackBar(
@@ -78,13 +81,13 @@ class PaymentModesController extends GetxController {
       });
     } catch (e) {
       ScaffoldMessenger.of(Get.context!).showSnackBar(
-        SnackBar(content: Text('Error initializing payment: $e')),
-      );
-      ScaffoldMessenger.of(Get.context!).showSnackBar(
         SnackBar(content: Text(e.toString())),
       );
+      ErrorHandler.handleError(e, isDioError: false, page: 'payment_mode_controller', method: 'initPaymentSheet');
     }
   }
+
+
 
 
 }

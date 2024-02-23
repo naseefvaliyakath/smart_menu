@@ -26,7 +26,7 @@ class StandPurchasePage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Center(
-                  child: Image.asset('assets/image/qr_code.png', height: 200.h),
+                  child: Image.asset('assets/image/acrlic_stant_purchase.jpeg', height: 200.h),
                 ),
                 20.verticalSpace,
                 Text(
@@ -49,10 +49,29 @@ class StandPurchasePage extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 20.verticalSpace,
-                Text(
-                  'Select from the options below to purchase the required acrylic stand. Ensure the size is either A6 or 4x6 inches.',
-                  style: TextStyle(fontSize: 18.sp),
+                RichText(
                   textAlign: TextAlign.center,
+                  text: TextSpan(
+                    style: TextStyle(
+                      fontSize: 18.sp, // Make sure to import 'package:flutter_screenutil/flutter_screenutil.dart' for .sp to work
+                      color: Colors.black, // Default text color
+                    ),
+                    children: [
+                      TextSpan(
+                        text: 'You need to purchase ',
+                      ),
+                      TextSpan(
+                        text: 'A6 or 4x6 inches Acrylic Table Stand',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ' , You can purchase from below link or local stores',
+                      ),
+                    ],
+                  ),
                 ),
                 30.verticalSpace,
                 // Displaying each filtered item as a Card
@@ -68,15 +87,6 @@ class StandPurchasePage extends StatelessWidget {
                       onTap: () => _launchURL(entry.value.link),
                     ),
                   ),
-                20.verticalSpace,
-                Text(
-                  'or you can purchase from a local store or other sites',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    color: Colors.grey[600],
-                  ),
-                ),
                 20.verticalSpace,
               ],
             ),

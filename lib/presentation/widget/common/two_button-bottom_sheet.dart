@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:showcaseview/showcaseview.dart';
+import 'package:smart_menu/presentation/widget/common/show_case_widget.dart';
+import '../../../constants/app_constant_names.dart';
+import '../../controller/show_case_controller.dart';
 import 'buttons/round_border_button.dart'; // Make sure this import is correctly pointing to your RoundBorderButton widget
 
 class FlexibleBtnBottomSheet {
@@ -8,6 +12,7 @@ class FlexibleBtnBottomSheet {
     required BuildContext context,
     required String b1Name,
     required String b2Name,
+    String? showCaseFor,
     String? b3Name,
     String? b4Name,
     String? b5Name,
@@ -21,6 +26,10 @@ class FlexibleBtnBottomSheet {
     Function? b6Function,
     Function? b7Function, // Added b7Function parameter
   }) {
+    final GlobalKey btn1 = GlobalKey();
+    final GlobalKey btn2 = GlobalKey();
+    final GlobalKey btn3 = GlobalKey();
+
     int buttonCount = 2 +
         (b3Name != null ? 1 : 0) +
         (b4Name != null ? 1 : 0) +
@@ -35,8 +44,17 @@ class FlexibleBtnBottomSheet {
         context: context,
         backgroundColor: Colors.transparent,
         builder: (BuildContext context) {
-          return
-            Container(
+          return ShowCaseWidget(onFinish: () {
+            //? after finish tour setting 'showcaseAddFoodPageBottomSheet' as false
+            Get.find<ShowcaseController>().setShowcase(KEY_SHOWCASE_ADD_FOOD_SCREEN_BOTTOM_SHEET);
+          }, builder: Builder(builder: (context) {
+            if (!Get.find<ShowcaseController>().showcaseAddFoodPageBottomSheet &&
+                showCaseFor == KEY_SHOWCASE_ADD_FOOD_SCREEN_BOTTOM_SHEET) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                ShowCaseWidget.of(context).startShowCase([btn1, btn2, btn3]);
+              });
+            }
+            return Container(
               height: totalHeight,
               padding: EdgeInsets.symmetric(
                 horizontal: 20.w,
@@ -50,24 +68,39 @@ class FlexibleBtnBottomSheet {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     // Button 1
-                    RoundBorderButton(
-                      text: b1Name,
-                      textColor: Colors.white,
-                      onTap: b1Function,
+                    MyShowCase(
+                      showcaseKey: btn1,
+                      description: 'Choose Image From Gallery',
+                      tooltipBackgroundColor: Colors.white,
+                      child: RoundBorderButton(
+                        text: b1Name,
+                        textColor: Colors.white,
+                        onTap: b1Function,
+                      ),
                     ),
                     SizedBox(height: buttonSpacing),
                     // Button 2
-                    RoundBorderButton(
-                      text: b2Name,
-                      textColor: Colors.white,
-                      onTap: b2Function,
+                    MyShowCase(
+                      showcaseKey: btn2,
+                      description: 'Take Image With Camara',
+                      tooltipBackgroundColor: Colors.white,
+                      child: RoundBorderButton(
+                        text: b2Name,
+                        textColor: Colors.white,
+                        onTap: b2Function,
+                      ),
                     ),
                     if (b3Name != null && b3Function != null) SizedBox(height: buttonSpacing),
                     if (b3Name != null && b3Function != null)
-                      RoundBorderButton(
-                        text: b3Name,
-                        textColor: Colors.white,
-                        onTap: b3Function,
+                      MyShowCase(
+                        showcaseKey: btn3,
+                        description: 'Chose Image From Our Collections',
+                        tooltipBackgroundColor: Colors.white,
+                        child: RoundBorderButton(
+                          text: b3Name,
+                          textColor: Colors.white,
+                          onTap: b3Function,
+                        ),
                       ),
                     if (b4Name != null && b4Function != null) SizedBox(height: buttonSpacing),
                     if (b4Name != null && b4Function != null)
@@ -102,8 +135,7 @@ class FlexibleBtnBottomSheet {
                 ),
               ),
             );
-
-        }
-    );
+          }));
+        });
   }
 }

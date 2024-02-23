@@ -1,9 +1,10 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:get/get.dart' hide MultipartFile,FormData;
+import 'package:get/get.dart' hide MultipartFile, FormData;
 import 'package:smart_menu/data/model/food/food.dart';
 import '../../../../data/model/api_response/api_response.dart';
 import '../../../../data/network/dio_client.dart';
+import '../../../../data/network/handle_error.dart';
 import '../../../../presentation/controller/login_controller.dart';
 import '../../../../presentation/widget/snack_bar.dart';
 import '../contract/food_repository.dart';
@@ -21,32 +22,37 @@ class FoodRepositoryImpl implements FoodRepository {
   Future<ApiResponse<List<Food>>?> getAllFood() async {
     try {
       final response = await _dioClient.getRequest('food/${getShopId()}');
-      final ApiResponse<List<Food>> apiResponse = ApiResponse<List<Food>>.fromJson(
-        response.data,
-            (json) => (json as List).map((item) => Food.fromJson(item)).toList(),
-      );
-      return apiResponse;
+      if (response.data != null) {
+        final ApiResponse<List<Food>> apiResponse = ApiResponse<List<Food>>.fromJson(
+          response.data,
+          (json) => (json as List).map((item) => Food.fromJson(item)).toList(),
+        );
+        return apiResponse;
+      }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error',e.toString());
+      //? AppSnackBar.errorSnackBar('Error',e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'food_repo_impl', method: 'getAllFood');
       return null;
     }
+    return null;
   }
 
   @override
   Future<ApiResponse<Food>?> getFoodById(int id) async {
     try {
       final response = await _dioClient.getRequestWithBody('food/${id.toString()}/${getShopId()}', {'id': id});
-      final ApiResponse<Food> apiResponse = ApiResponse<Food>.fromJson(
-          response.data,
-              (json) => Food.fromJson(json as Map<String, dynamic>)
-      );
-      return apiResponse;
+      if (response.data != null) {
+        final ApiResponse<Food> apiResponse =
+            ApiResponse<Food>.fromJson(response.data, (json) => Food.fromJson(json as Map<String, dynamic>));
+        return apiResponse;
+      }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error',e.toString());
+      //? AppSnackBar.errorSnackBar('Error', e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'food_repo_impl', method: 'getFoodById');
       return null;
     }
+    return null;
   }
-
 
   @override
   Future<ApiResponse<Food>?> addFood(Food food, File? imageFile) async {
@@ -61,20 +67,20 @@ class FoodRepositoryImpl implements FoodRepository {
       final formData = FormData.fromMap(formDataMap);
 
       final response = await _dioClient.postMultipart('food/${getShopId()}', formData);
-
-      final ApiResponse<Food> apiResponse = ApiResponse<Food>.fromJson(
-        response.data,
-            (json) => Food.fromJson(json as Map<String, dynamic>),
-      );
-
-      return apiResponse;
+      if (response.data != null) {
+        final ApiResponse<Food> apiResponse = ApiResponse<Food>.fromJson(
+          response.data,
+          (json) => Food.fromJson(json as Map<String, dynamic>),
+        );
+        return apiResponse;
+      }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', e.toString());
+      //? AppSnackBar.errorSnackBar('Error', e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'food_repo_impl', method: 'addFood');
       return null;
     }
+    return null;
   }
-
-
 
   @override
   Future<ApiResponse<Food>?> updateFood(Food food, File? imageFile) async {
@@ -89,37 +95,41 @@ class FoodRepositoryImpl implements FoodRepository {
       final formData = FormData.fromMap(formDataMap);
 
       final response = await _dioClient.putMultipart('food/${getShopId()}', formData);
+      if (response.data != null) {
+        final ApiResponse<Food> apiResponse = ApiResponse<Food>.fromJson(
+          response.data,
+          (json) => Food.fromJson(json as Map<String, dynamic>),
+        );
 
-      final ApiResponse<Food> apiResponse = ApiResponse<Food>.fromJson(
-        response.data,
-            (json) => Food.fromJson(json as Map<String, dynamic>),
-      );
-
-      return apiResponse;
+        return apiResponse;
+      }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', e.toString());
+      //? AppSnackBar.errorSnackBar('Error', e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'food_repo_impl', method: 'updateFood');
       return null;
     }
+    return null;
   }
 
-
   @override
-  Future<ApiResponse<Food>?> deleteFood(int id,String imgName) async {
+  Future<ApiResponse<Food>?> deleteFood(int id, String imgName) async {
     try {
       //? for food delete we pass image name also to delete image from server
       final response = await _dioClient.delete('food/$id/${getShopId()}/$imgName');
-      final ApiResponse<Food> apiResponse = ApiResponse<Food>.fromJson(
-        response.data,
-            (json) => Food.fromJson(json as Map<String, dynamic>),
-      );
-      return apiResponse;
+      if (response.data != null) {
+        final ApiResponse<Food> apiResponse = ApiResponse<Food>.fromJson(
+          response.data,
+          (json) => Food.fromJson(json as Map<String, dynamic>),
+        );
+        return apiResponse;
+      }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', e.toString());
+      //? AppSnackBar.errorSnackBar('Error', e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'food_repo_impl', method: 'deleteFood');
       return null;
     }
+    return null;
   }
-
-
 
   @override
   Future<ApiResponse<Food>?> updateSelectedFields(Food food) async {
@@ -133,18 +143,20 @@ class FoodRepositoryImpl implements FoodRepository {
         'fdIsQuick': food.fdIsQuick,
         'shopId': food.shopId,
       });
-      final ApiResponse<Food> apiResponse = ApiResponse<Food>.fromJson(
-        response.data,
-            (json) => Food.fromJson(json as Map<String, dynamic>),
-      );
-      return apiResponse;
+      if (response.data != null) {
+        final ApiResponse<Food> apiResponse = ApiResponse<Food>.fromJson(
+          response.data,
+          (json) => Food.fromJson(json as Map<String, dynamic>),
+        );
+        return apiResponse;
+      }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', e.toString());
+      //? AppSnackBar.errorSnackBar('Error', e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'food_repo_impl', method: 'updateSelectedFields');
       return null;
     }
+    return null;
   }
-
-
 
   @override
   Future<ApiResponse<Food>?> updateOfferFields(Food updates) async {
@@ -159,31 +171,37 @@ class FoodRepositoryImpl implements FoodRepository {
         'offerName': updates.offerName,
         'shopId': updates.shopId,
       });
-      final ApiResponse<Food> apiResponse = ApiResponse<Food>.fromJson(
-        response.data,
-            (json) => Food.fromJson(json as Map<String, dynamic>),
-      );
-      return apiResponse;
+      if (response.data != null) {
+        final ApiResponse<Food> apiResponse = ApiResponse<Food>.fromJson(
+          response.data,
+          (json) => Food.fromJson(json as Map<String, dynamic>),
+        );
+        return apiResponse;
+      }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', e.toString());
+      //? AppSnackBar.errorSnackBar('Error', e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'food_repo_impl', method: 'updateOfferFields');
       return null;
     }
+    return null;
   }
 
   @override
   Future<ApiResponse<List<Food>>?> getOfferFood() async {
     try {
       final response = await _dioClient.getRequest('food/offerFood/${getShopId()}');
-      final ApiResponse<List<Food>> apiResponse = ApiResponse<List<Food>>.fromJson(
-        response.data,
-            (json) => (json as List).map((item) => Food.fromJson(item)).toList(),
-      );
-      return apiResponse;
+      if (response.data != null) {
+        final ApiResponse<List<Food>> apiResponse = ApiResponse<List<Food>>.fromJson(
+          response.data,
+          (json) => (json as List).map((item) => Food.fromJson(item)).toList(),
+        );
+        return apiResponse;
+      }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error',e.toString());
+      //? AppSnackBar.errorSnackBar('Error', e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'food_repo_impl', method: 'getOfferFood');
       return null;
     }
+    return null;
   }
-
-
 }

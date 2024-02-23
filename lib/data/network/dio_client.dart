@@ -1,130 +1,141 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:get/get.dart' hide Response,FormData;
+import 'package:get/get.dart' hide Response, FormData;
 import 'package:path_provider/path_provider.dart';
 import 'package:smart_menu/constants/app_constant_names.dart';
 import '../../constants/url.dart';
+import 'handle_error.dart';
 
-class DioClient extends GetxController{
+
+class DioClient extends GetxController {
+  Dio _dio = Dio();
+
   //? secure storage for saving token
-  FlutterSecureStorage storage = const FlutterSecureStorage(aOptions: AndroidOptions(
+  FlutterSecureStorage storage = const FlutterSecureStorage(
+      aOptions: AndroidOptions(
     encryptedSharedPreferences: true,
   ));
-  Dio _dio = Dio();
   String token = '';
 
 
   @override
   Future<void> onInit() async {
     token = await storage.read(key: KEY_TOKEN) ?? '';
-    print('Token $token');
-    _dio = Dio(BaseOptions(baseUrl: BASE_URL, headers: {"Authorization": "Bearer $token"}));
+    log('Token $token');
+    _dio = Dio(BaseOptions(
+      baseUrl: BASE_URL,
+      headers: {"Authorization": "Bearer $token"},
+    ));
     initializeInterceptors();
     super.onInit();
   }
 
-
-  Future<Response> getRequest(String url) async {
-    // TODO: implement getRequest
-
-    Response response;
+  Future<Response> getRequest(String url, {bool showSnack = true}) async {
     try {
-      response = await _dio.get(url);
+      if(url.contains('shop/getShopByPhone/')){
+        _dio.options.headers['Authorization'] = 'Bearer $STATIC_TOKEN';
+      }
+      Response response = await _dio.get(url);
+      return response;
     } on DioException catch (e) {
-      print(e);
-      throw Exception(e.type);
+      ErrorHandler.handleError(e,
+          isDioError: true, page: 'dio_client', method: 'getRequest', showSnack: showSnack);
+      return Response(requestOptions: RequestOptions(), data: null);
     } catch (e) {
-      rethrow;
-    } finally {}
-
-    return response;
+      ErrorHandler.handleError(e, page: 'dio_client', method: 'getRequest');
+      return Response(requestOptions: RequestOptions(), data: null);
+    }
   }
 
   //? if forceOnline is true then even in offline app it will fetch data from server
   //? in sum case it needed eg:menuBook
-  Future<Response> getRequestWithBody(String url, body) async {
-    Response response;
+  Future<Response> getRequestWithBody(String url, body, {bool showSnack = true}) async {
     try {
-      response = await _dio.get(url, queryParameters: body);
+      Response response = await _dio.get(url, queryParameters: body);
+      return response;
     } on DioException catch (e) {
-      throw Exception(e.type);
+      ErrorHandler.handleError(e,
+          isDioError: true, page: 'dio_client', method: 'getRequestWithBody', showSnack: showSnack);
+      return Response(requestOptions: RequestOptions(), data: null);
     } catch (e) {
-      rethrow;
-    } finally {}
-
-    return response;
+      ErrorHandler.handleError(e, isDioError: false, page: 'dio_client', method: 'getRequestWithBody');
+      return Response(requestOptions: RequestOptions(), data: null);
+    }
   }
 
   //? delete with id
   Future<Response> delete(String url, {String? id}) async {
-    Response response;
     try {
-      response = await _dio.delete(id != null ? '$url/$id' : url);
+      Response response = await _dio.delete(id != null ? '$url/$id' : url);
+      return response;
     } on DioException catch (e) {
-      throw Exception(e.type);
+      ErrorHandler.handleError(e, isDioError: true, page: 'dio_client', method: 'delete');
+      return Response(requestOptions: RequestOptions(), data: null);
     } catch (e) {
-      rethrow;
-    } finally {}
-    return response;
+      ErrorHandler.handleError(e, isDioError: false, page: 'dio_client', method: 'delete');
+      return Response(requestOptions: RequestOptions(), data: null);
+    }
   }
 
   Future<Response> updateData(String url, dynamic body) async {
-    Response response;
     try {
-      response = await _dio.put(url, data: json.encode(body));
+      Response response = await _dio.put(url, data: json.encode(body));
+      return response;
     } on DioException catch (e) {
-      throw Exception(e.type);
+      ErrorHandler.handleError(e, isDioError: true, page: 'dio_client', method: 'updateData');
+      return Response(requestOptions: RequestOptions(), data: null);
     } catch (e) {
-      rethrow;
-    } finally {}
-    return response;
+      ErrorHandler.handleError(e, isDioError: false, page: 'dio_client', method: 'updateData');
+      return Response(requestOptions: RequestOptions(), data: null);
+    }
   }
 
   //?insert with body
   Future<Response> insertWithBody(String url, body) async {
     // TODO: implement getRequest
-
-    Response response;
     try {
-      response = await _dio.post(url, data: body);
+      if(url == 'shop/verifyOTPAndCreateShop' || url.contains('shop/initiateCreateShop')){
+        _dio.options.headers['Authorization'] = 'Bearer $STATIC_TOKEN';
+      }
+      Response response = await _dio.post(url, data: body);
+      return response;
     } on DioException catch (e) {
-      throw Exception(e.type);
+      ErrorHandler.handleError(e, isDioError: true, page: 'dio_client', method: 'insertWithBody');
+      return Response(requestOptions: RequestOptions(), data: null);
     } catch (e) {
-      rethrow;
-    } finally {}
-
-    return response;
+      ErrorHandler.handleError(e, isDioError: false, page: 'dio_client', method: 'insertWithBody');
+      return Response(requestOptions: RequestOptions(), data: null);
+    }
   }
 
   Future<Response> postMultipart(String url, FormData formData) async {
-    Response response;
     try {
-      response = await _dio.post(url, data: formData);
+      Response response = await _dio.post(url, data: formData);
+      return response;
     } on DioException catch (e) {
-      throw Exception(e.type);
+      ErrorHandler.handleError(e, isDioError: true, page: 'dio_client', method: 'postMultipart');
+      return Response(requestOptions: RequestOptions(), data: null);
     } catch (e) {
-      rethrow;
-    } finally {}
-
-    return response;
+      ErrorHandler.handleError(e, isDioError: false, page: 'dio_client', method: 'postMultipart');
+      return Response(requestOptions: RequestOptions(), data: null);
+    }
   }
-
 
   Future<Response> putMultipart(String url, FormData formData) async {
-    Response response;
     try {
-      response = await _dio.put(url, data: formData);
+      Response response = await _dio.put(url, data: formData);
+      return response;
     } on DioException catch (e) {
-      throw Exception(e.type);
+      ErrorHandler.handleError(e, isDioError: true, page: 'dio_client', method: 'putMultipart');
+      return Response(requestOptions: RequestOptions(), data: null);
     } catch (e) {
-      rethrow;
-    } finally {}
-
-    return response;
+      ErrorHandler.handleError(e, isDioError: false, page: 'dio_client', method: 'putMultipart');
+      return Response(requestOptions: RequestOptions(), data: null);
+    }
   }
-
 
   Future<String> downloadFile(String url, String filename) async {
     try {
@@ -132,9 +143,11 @@ class DioClient extends GetxController{
       await _dio.download(url, "${dir.path}/$filename");
       return "${dir.path}/$filename";
     } on DioException catch (e) {
-      throw Exception(e.type);
+      ErrorHandler.handleError(e, isDioError: false, page: 'dio_client', method: 'downloadFile');
+      return '';
     } catch (e) {
-      rethrow;
+      ErrorHandler.handleError(e, isDioError: false, page: 'dio_client', method: 'downloadFile');
+      return '';
     }
   }
 
@@ -164,5 +177,4 @@ class DioClient extends GetxController{
     _dio = Dio(BaseOptions(baseUrl: BASE_URL, headers: {"Authorization": "Bearer $token"}));
     update();
   }
-
 }

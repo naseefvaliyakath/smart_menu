@@ -6,12 +6,13 @@ import 'package:smart_menu/data/model/food_gallery/food_gallery.dart';
 import 'package:smart_menu/data/model/food_gallery_category/food_gallery_category.dart';
 import 'package:smart_menu/domain/repository/network/contract/food_gallery_repository.dart';
 import 'package:smart_menu/presentation/view/startup_video_tutorial.dart';
-
 import '../../data/model/api_response/api_response.dart';
+import '../../data/network/handle_error.dart';
 import '../widget/snack_bar.dart';
 
 class HomeController extends GetxController {
-  final storage = const FlutterSecureStorage(aOptions: AndroidOptions(
+  final storage = const FlutterSecureStorage(
+      aOptions: AndroidOptions(
     encryptedSharedPreferences: true,
   ));
   FoodGalleryRepository foodGalleryRepository = Get.find<FoodGalleryRepository>();
@@ -21,21 +22,33 @@ class HomeController extends GetxController {
   final List<FoodGalleryCategory> foodGalleryCategory = [];
 
   @override
+  Future<void> onReady() async {
+    Future.delayed(const Duration(milliseconds: 500), () async {
+      await getGalleryCategory(showSnack: false);
+      getFoodGallery(showSnack: false);
+      showStartupVideo();
+    });
+    super.onReady();
+  }
+
+  @override
   Future<void> onInit() async {
-    await getGalleryCategory(showSnack: false);
-    getFoodGallery(showSnack: false);
-    showStartupVideo();
     super.onInit();
   }
 
   void clearCacheMemory() async {
-    final cacheManager = CacheManager(
-      Config(
-        'my_cache',
-        stalePeriod: const Duration(days: 7),
-      ),
-    );
-    await cacheManager.emptyCache();
+    try {
+      final cacheManager = CacheManager(
+            Config(
+              'my_cache',
+              stalePeriod: const Duration(days: 7),
+            ),
+          );
+      await cacheManager.emptyCache();
+    } catch (e) {
+      ErrorHandler.handleError(e, isDioError: false, page: 'home_controller', method: 'clearCacheMemory');
+      return;
+    }
   }
 
   getFoodGallery({bool showSnack = true}) async {
@@ -57,11 +70,12 @@ class HomeController extends GetxController {
           return true;
         }
       } else {
-       //? AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+        //? AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
         return false;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+      ErrorHandler.handleError(e, isDioError: false, page: 'home_controller', method: 'getFoodGallery');
+      return;
     } finally {
       update();
     }
@@ -94,17 +108,23 @@ class HomeController extends GetxController {
         return false;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+      ErrorHandler.handleError(e, isDioError: false, page: 'home_controller', method: 'getGalleryCategory');
+      return;
     } finally {
       update();
     }
   }
 
   showStartupVideo() async {
-   String? isVideoWatch = await storage.read(key: KEY_STARTUP_TUTORIAL);
-   if(isVideoWatch == null || isVideoWatch == 'false'){
-     Get.to(const StartupTutorialPage());
-   }
+    try {
+      String? isVideoWatch = await storage.read(key: KEY_STARTUP_TUTORIAL);
+      if (isVideoWatch == null || isVideoWatch == 'false') {
+            Get.to(() => const StartupTutorialPage());
+          }
+    } catch (e) {
+      ErrorHandler.handleError(e, isDioError: false, page: 'home_controller', method: 'showStartupVideo');
+      return;
+    }
   }
 
 

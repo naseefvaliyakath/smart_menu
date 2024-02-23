@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:smart_menu/core/routes/app_pages.dart';
+import 'package:smart_menu/presentation/controller/login_controller.dart';
 import 'package:smart_menu/presentation/view/profile_page.dart';
 import '../../../constants/colors/app_colors.dart';
 import '../../view/startup_video_tutorial.dart';
@@ -56,7 +57,7 @@ class AppDrawer extends StatelessWidget {
             title: Text('Profile', style: TextStyle(fontSize: 16.sp)),
             onTap: () {
               Navigator.pop(context);
-              Get.to(ProfilePage());
+              Get.to(() => ProfilePage());
             },
           ),
           ListTile(
@@ -69,10 +70,19 @@ class AppDrawer extends StatelessWidget {
 
           ListTile(
             leading: Icon(Icons.price_change_rounded, size: 20.sp),
-            title: Text('Pricing', style: TextStyle(fontSize: 16.sp)),
+            title: Text('Plans', style: TextStyle(fontSize: 16.sp)),
             onTap: () {
               Navigator.pop(context);
               Get.toNamed(AppPages.PAYMENT_MODE_PAGE);
+
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.logout, size: 20.sp),
+            title: Text('Log Out', style: TextStyle(fontSize: 16.sp)),
+            onTap: () {
+              Navigator.pop(context);
+              Get.find<LoginController>().logOutApp();
 
             },
           ),

@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -7,7 +6,6 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:smart_menu/constants/colors/app_colors.dart';
 import 'package:smart_menu/presentation/widget/common/buttons/app_rount_mini_btn.dart';
 import 'package:smart_menu/presentation/widget/common/common_text/big_text.dart';
-import 'package:smart_menu/presentation/widget/common/common_text/mid_text.dart';
 import '../../alert/single_txt_alert.dart';
 import '../../controller/customize_qr_stand_controller.dart';
 

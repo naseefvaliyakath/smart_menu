@@ -15,6 +15,7 @@ import '../../constants/dummy_models.dart';
 import '../../constants/enums.dart';
 import '../../data/model/api_response/api_response.dart';
 import '../../data/model/app_update_model/app_update_model.dart';
+import '../../data/network/handle_error.dart';
 import '../alert/update_notice_alert.dart';
 
 class LoginController extends GetxController {
@@ -22,7 +23,8 @@ class LoginController extends GetxController {
 
   Shop myShop = dummyShop;
 
-  final storage = const FlutterSecureStorage(aOptions: AndroidOptions(
+  final storage = const FlutterSecureStorage(
+      aOptions: AndroidOptions(
     encryptedSharedPreferences: true,
   ));
   ShopRepository shopRepository = Get.find<ShopRepository>();
@@ -38,8 +40,18 @@ class LoginController extends GetxController {
   TextEditingController emailController = TextEditingController();
   OtpFieldControllerV2 otpController = OtpFieldControllerV2();
 
+  //? update shop details in profile
+  TextEditingController shopNameEditController = TextEditingController();
+  TextEditingController shopPhoneEditController = TextEditingController();
+  TextEditingController shopEmailEditController = TextEditingController();
+
   final GlobalKey<FormState> registerFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
+
+  //?update shop details alert forms
+  final GlobalKey<FormState> shopNameEditFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> shopPhoneEditFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> shopEmailEditFormKey = GlobalKey<FormState>();
 
   Rx<States> selectedState = Rx<States>(States.values.first);
   Rx<District> selectedDistrict = Rx<District>(District.values.first);
@@ -51,36 +63,45 @@ class LoginController extends GetxController {
   RxBool isFormSubmitted = false.obs;
 
   @override
+  void onReady() {
+    Future.delayed(const Duration(milliseconds: 200), () async {
+      if (isAuthenticated) {
+        updateShopInfoEveryTime();
+        checkAppUpdate();
+      }
+    });
+    super.onReady();
+  }
+
+  @override
   Future<void> onInit() async {
     isAuthenticated = await checkIsAuthenticated();
     retrieveShopDataFromSecureStorage();
-    updateShopInfoEveryTime();
-    checkAppUpdate();
     super.onInit();
   }
 
-  Future<void> initiateCreateShop() async {
+  Future<void> initiateCreateShop({bool isResendOtp = false , String otpType = 'sms'}) async {
     try {
       if (registerFormKey.currentState!.validate()) {
         try {
           Shop shop = Shop(
-              0,
-              //? ID auto generate
-              shopNameController.text,
-              phone1Controller.text,
-              enumToString(selectedState.value),
-              enumToString(selectedDistrict.value),
-              'Basic',
-              DateFormat('yyyy-MM-dd').format(DateTime.now()),
-              //? In server
-              'Active',
-              DateFormat('yyyy-MM-dd').format(DateTime.now()),
-              //? In server
-              DateFormat('yyyy-MM-dd').format(DateTime.now()),
-              //? In server
-              'token' //? no needed
-              );
-          ApiResponse<Shop>? apiResponse = await shopRepository.initiateCreateShop(shop);
+            shopId: 0,
+            // Assuming `shopId` is auto-generated and might not be needed as a named parameter if handled by the database
+            shopName: shopNameController.text,
+            phoneNumber: phone1Controller.text,
+            email: emailController.text,
+            state: enumToString(selectedState.value),
+            district: enumToString(selectedDistrict.value),
+            plan: 'Basic',
+            expiryDate: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+            //? set it in server side no use it
+            status: 'active',
+            //?  set it in server side no use it
+            createdAt: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+            updatedAt: DateFormat('yyyy-MM-dd').format(DateTime.now()),
+            token: 'token',
+          );
+          ApiResponse<Shop>? apiResponse = await shopRepository.initiateCreateShop(shop,otpType);
           if (apiResponse != null) {
             if (apiResponse.error) {
               btnController.error();
@@ -88,7 +109,10 @@ class LoginController extends GetxController {
             } else {
               AppSnackBar.successSnackBar('Success', apiResponse.message);
               //? check otp is send successfully
-              if (apiResponse.message == 'SMS sent successfully.') {
+              if (apiResponse.message.contains('sent successfully')) {
+                if (isResendOtp) {
+                  otpController.clear();
+                }
                 btnController.success();
                 isFormSubmitted.value = true;
               }
@@ -107,7 +131,8 @@ class LoginController extends GetxController {
       }
     } catch (e) {
       btnController.error();
-      AppSnackBar.errorSnackBar('Error', e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'login_controller', method: 'initiateCreateShop');
+      return;
     } finally {
       Future.delayed(const Duration(seconds: 1), () {
         btnController.reset();
@@ -149,7 +174,8 @@ class LoginController extends GetxController {
       }
     } catch (e) {
       btnController.error();
-      AppSnackBar.errorSnackBar('Error', e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'login_controller', method: 'verifyOTPAndCreateShop');
+      return;
     } finally {
       Future.delayed(const Duration(seconds: 1), () {
         btnController.reset();
@@ -202,7 +228,8 @@ class LoginController extends GetxController {
       Future.delayed(const Duration(seconds: 1), () {
         loginBtnController.reset();
       });
-      AppSnackBar.errorSnackBar('Error', e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'login_controller', method: 'login');
+      return;
     }
   }
 
@@ -232,19 +259,25 @@ class LoginController extends GetxController {
   }
 
   saveLoginInfoAndRedirect(Shop? shop) async {
-    if (shop != null) {
-      storage.write(key: KEY_TOKEN, value: shop.token);
-      storage.write(key: KEY_ID, value: shop.shopId.toString());
-      storage.write(key: KEY_SHOP_PHONE, value: shop.phoneNumber.toString());
-      storage.write(key: KEY_SHOP_NAME, value: shop.shopName);
-      storage.write(key: KEY_SHOP_EXPAIRY, value: shop.expiryDate);
-      storage.write(key: KEY_SHOP_STATUS, value: shop.status);
-      storage.write(key: KEY_SHOP_PLAN, value: shop.plan);
-      //?update myShop to get globally data
-      myShop = shop;
-      //? update token in Dio Clint
-      Get.find<DioClient>().updatingToken(shop.token ?? '');
-      Get.offNamed(AppPages.HOME);
+    try {
+      if (shop != null) {
+            storage.write(key: KEY_TOKEN, value: shop.token);
+            storage.write(key: KEY_ID, value: shop.shopId.toString());
+            storage.write(key: KEY_SHOP_PHONE, value: shop.phoneNumber.toString());
+            storage.write(key: KEY_SHOP_NAME, value: shop.shopName);
+            storage.write(key: KEY_SHOP_EXPAIRY, value: shop.expiryDate);
+            storage.write(key: KEY_SHOP_STATUS, value: shop.status);
+            storage.write(key: KEY_SHOP_PLAN, value: shop.plan);
+            //?update myShop to get globally data
+            myShop = shop;
+            //? update token in Dio Clint
+            Get.find<DioClient>().updatingToken(shop.token ?? '');
+            registerMobileNumberController.clear();
+            Get.offAllNamed(AppPages.HOME);
+          }
+    } catch (e) {
+      ErrorHandler.handleError(e, isDioError: false, page: 'login_controller', method: 'saveLoginInfoAndRedirect');
+      return;
     }
   }
 
@@ -258,19 +291,28 @@ class LoginController extends GetxController {
   }
 
   retrieveShopDataFromSecureStorage() async {
-    String shopId = await storage.read(key: KEY_ID) ?? '0';
-    String shopName = await storage.read(key: KEY_SHOP_NAME) ?? 'No Name';
-    String shopNumber = await storage.read(key: KEY_SHOP_PHONE) ?? '1234567890';
-    String shopPlan = await storage.read(key: KEY_SHOP_PLAN) ?? 'Trial';
-    String expiryDate = await storage.read(key: KEY_SHOP_EXPAIRY) ?? '2023-12-31';
-    String status = await storage.read(key: KEY_SHOP_STATUS) ?? 'deactivated';
-    //? updating to myShop variable
-    myShop.shopId = int.tryParse(shopId);
-    myShop.shopName = shopName;
-    myShop.phoneNumber = shopNumber;
-    myShop.plan = shopPlan;
-    myShop.expiryDate = expiryDate;
-    myShop.status = status;
+    try {
+      String shopId = await storage.read(key: KEY_ID) ?? '0';
+      String shopName = await storage.read(key: KEY_SHOP_NAME) ?? 'No Name';
+      String shopNumber = await storage.read(key: KEY_SHOP_PHONE) ?? '1234567890';
+      String shopEmail = await storage.read(key: KEY_SHOP_EMAIL) ?? 'dummy@gmail.com';
+      String shopPlan = await storage.read(key: KEY_SHOP_PLAN) ?? 'Trial';
+      String expiryDate = await storage.read(key: KEY_SHOP_EXPAIRY) ?? '2023-12-31';
+      String status = await storage.read(key: KEY_SHOP_STATUS) ?? 'deactivated';
+      //? updating to myShop variable
+      myShop.shopId = int.tryParse(shopId);
+      myShop.shopName = shopName;
+      myShop.phoneNumber = shopNumber;
+      myShop.email = shopEmail;
+      myShop.plan = shopPlan;
+      myShop.expiryDate = expiryDate;
+      myShop.status = status;
+    } catch (e) {
+      ErrorHandler.handleError(e, isDioError: false, page: 'login_controller', method: 'retrieveShopDataFromSecureStorage');
+      return;
+    } finally {
+      update();
+    }
   }
 
   updateShopInfoEveryTime() async {
@@ -281,7 +323,9 @@ class LoginController extends GetxController {
         if (!apiResponse.error) {
           Shop? shop = apiResponse.data;
           if (shop != null) {
+            myShop = shop;
             storage.write(key: KEY_SHOP_PHONE, value: shop.phoneNumber.toString());
+            storage.write(key: KEY_SHOP_EMAIL, value: shop.email);
             storage.write(key: KEY_SHOP_NAME, value: shop.shopName);
             storage.write(key: KEY_SHOP_EXPAIRY, value: shop.expiryDate);
             storage.write(key: KEY_SHOP_STATUS, value: shop.status);
@@ -298,10 +342,14 @@ class LoginController extends GetxController {
         }
       }
     } catch (e) {
-      return e;
+      ErrorHandler.handleError(e, isDioError: false, page: 'login_controller', method: 'updateShopInfoEveryTime');
+      return;
+    } finally {
+      update();
     }
   }
 
+  //? checking for update
   checkAppUpdate() async {
     try {
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
@@ -322,7 +370,70 @@ class LoginController extends GetxController {
         }
       }
     } catch (e) {
+      ErrorHandler.handleError(e, isDioError: false, page: 'login_controller', method: 'checkAppUpdate');
       return;
+    }
+  }
+
+  logOutApp() {
+    try {
+      storage.deleteAll(
+              aOptions: const AndroidOptions(
+            encryptedSharedPreferences: true,
+          ));
+      Get.offAllNamed(AppPages.LOGIN_PAGE);
+    } catch (e) {
+      ErrorHandler.handleError(e, isDioError: false, page: 'login_controller', method: 'logOutApp');
+      return;
+    }
+  }
+
+  Future updateShopDetails(String updateField) async {
+    try {
+      String updateFieldValue = updateField == 'shopName'
+          ? shopNameEditController.text
+          : updateField == 'phoneNumber'
+              ? shopPhoneEditController.text
+              : updateField == 'email'
+                  ? shopEmailEditController.text
+                  : '';
+
+      Map<String, dynamic> updateBody = {updateField: updateFieldValue};
+
+      bool isFormValid = updateField == 'shopName'
+          ? shopNameEditFormKey.currentState!.validate()
+          : updateField == 'phoneNumber'
+              ? shopPhoneEditFormKey.currentState!.validate()
+              : updateField == 'email'
+                  ? shopEmailEditFormKey.currentState!.validate()
+                  : false;
+      if (!isFormValid && updateFieldValue.isNotEmpty) {
+        AppSnackBar.errorSnackBar('Error', 'Pleas enter valid input');
+        return;
+      }
+      Navigator.pop(Get.context!);
+      ApiResponse<Shop>? apiResponse = await shopRepository.updateShop(updateBody);
+      if (apiResponse != null) {
+        if (apiResponse.error) {
+          AppSnackBar.errorSnackBar('Error', apiResponse.message);
+          return false;
+        } else {
+          shopEmailEditController.clear();
+          shopPhoneEditController.clear();
+          shopNameEditController.clear();
+          AppSnackBar.successSnackBar('Success', apiResponse.message);
+          updateShopInfoEveryTime();
+          return true;
+        }
+      } else {
+        //?  AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+        return false;
+      }
+    } catch (e) {
+      ErrorHandler.handleError(e, isDioError: false, page: 'login_controller', method: 'updateShopDetails');
+      return;
+    } finally {
+      update();
     }
   }
 

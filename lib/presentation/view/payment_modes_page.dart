@@ -1,23 +1,20 @@
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:pay/pay.dart';
 import 'package:smart_menu/constants/colors/app_colors.dart';
 import 'package:smart_menu/presentation/controller/payment_modes_controller.dart';
-
-import '../../payment_configurations.dart';
-import '../widget/common/buttons/round_border_button.dart';
+import 'package:smart_menu/presentation/controller/razor_pay_controller.dart';
+import '../widget/common/buttons/razorpay_btn.dart';
 import '../widget/common/buttons/stripe_btn.dart';
 import '../widget/common/common_text/big_text.dart';
+import '../widget/common/plan_expard_message_txt.dart';
 
 class PaymentModesPage extends StatelessWidget {
   const PaymentModesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<PaymentModesController>(builder: (ctrl) {
+    return GetBuilder<RazorPayController>(builder: (ctrl) {
       return Scaffold(
         appBar: AppBar(
           title: const BigText(text: 'Upgrade Plan', color: Colors.black),
@@ -44,15 +41,17 @@ class PaymentModesPage extends StatelessWidget {
                         children: [
                           SizedBox(
                             height: 100.h,
-                            width: 100.w,
-                            child: Image.asset(
-                              'assets/image/silver.png',
+                            width: double.maxFinite,
+                            child: Image.network(
+                              ctrl.myPlan.isNotEmpty
+                                  ? '${ctrl.myPlan.first.imgLink}'
+                                  : 'https://mobizate.com/assetsUpload/place_holder.jpeg',
                               fit: BoxFit.contain,
                             ),
                           ),
                           10.verticalSpace,
                           Text(
-                            'Silver Plan',
+                            ctrl.myPlan.isNotEmpty ? (ctrl.myPlan.first.planName ?? '') : '',
                             style: TextStyle(
                               fontSize: 24.sp,
                               fontWeight: FontWeight.bold,
@@ -61,16 +60,27 @@ class PaymentModesPage extends StatelessWidget {
                           ),
                           10.verticalSpace,
                           Text(
-                            'Rs 1999',
+                            ctrl.myPlan.isNotEmpty ? ('Rs : ${ctrl.myPlan.first.price}' ?? '') : '',
                             style: TextStyle(
                               fontSize: 28.sp,
                               fontWeight: FontWeight.w600,
                               color: Colors.black54,
                             ),
                           ),
+                          SizedBox(height: 10.h),
+                          Text(
+                            ctrl.myPlan.isNotEmpty
+                                ? ('VALIDITY : ${ctrl.myPlan.first.durationMonths} MONTH' ?? '')
+                                : '',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.green,
+                            ),
+                          ),
                           SizedBox(height: 20.h),
                           Text(
-                            'Unlock premium features with the Silver Plan, including unlimited access, ad-free experience, exclusive content, and more!',
+                            ctrl.myPlan.isNotEmpty ? (ctrl.myPlan.first.description ?? '') : '',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 16.sp,
@@ -82,30 +92,17 @@ class PaymentModesPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 30.h),
-
-                  // Payment Buttons
-                  StripePaymentButton(
-                    onTap: () => ctrl.initPaymentSheet(),
+                  PlanExpiredMessage(
+                    expiryFate: ctrl.myShop.expiryDate,
+                    planName: ctrl.myShop.plan,
+                    visible: !ctrl.checkAppIsExpired(),
                   ),
-                  SizedBox(height: 15.h),
-                  if (Platform.isAndroid) ...[
-                    GooglePayButton(
-                      paymentConfiguration: PaymentConfiguration.fromJsonString(defaultGooglePay),
-                      paymentItems: const [
-                        PaymentItem(
-                          label: 'Total',
-                          amount: '199',
-                          status: PaymentItemStatus.final_price,
-                        )
-                      ],
-                      type: GooglePayButtonType.pay,
-                      margin: const EdgeInsets.only(top: 15.0),
-                      onPaymentResult: (result) => debugPrint('Payment Result $result'),
-                      loadingIndicator: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
-                  ],
+                  // Payment Buttons
+                  RazorPayPaymentButton(
+                    disabled: !ctrl.checkAppIsExpired(),
+                    onTap: () => ctrl.openCheckout(ctrl.myPlan.first),
+                    // onTap: () => ctrl.checkTransactionIsSuccess(email: 'naseefvs1@gmail.com', itemId: 3, transactionId: 'pay_NdL6773ot5L2m3'),
+                  ),
                 ],
               ),
             ),

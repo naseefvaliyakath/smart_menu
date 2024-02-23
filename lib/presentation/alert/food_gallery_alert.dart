@@ -47,9 +47,7 @@ void showFoodGallery({required BuildContext context}) {
                         img: ctrl.foodGalleryFoods[index].fdImg ?? IMG_LINK,
                         name: '${ctrl.foodGalleryFoods[index].name}',
                         onTap: () {
-                          Get
-                              .find<AddFoodController>()
-                              .galleryImgLink = ctrl.foodGalleryFoods[index].fdImg;
+                          Get.find<AddFoodController>().galleryImgLink = ctrl.foodGalleryFoods[index].fdImg;
                           Get.find<AddFoodController>().loadImage(ctrl.foodGalleryFoods[index].fdImg);
                           Navigator.pop(context);
                         },

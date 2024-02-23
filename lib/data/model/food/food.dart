@@ -89,36 +89,37 @@ class Food {
   @JsonKey(name: "updatedAt")
   String? updatedAt;
 
-  // Regular constructor
-  Food(
-      this.id,
-      this.shopId,
-      this.fdName,
-      this.foodDescription,
-      this.fdCategory,
-      this.fdFullPrice,
-      this.fdThreeBiTwoPrsPrice,
-      this.fdHalfPrice,
-      this.fdQtrPrice,
-      this.fullPrsName,
-      this.thrByToPrsName,
-      this.halfPrsName,
-      this.qtrPrsName,
-      this.fdOffFullPrice,
-      this.fdOffThreeByTwoPrice,
-      this.fdOffHalfPrice,
-      this.fdOffQtrPrice,
-      this.offerName,
-      this.fdIsLoos,
-      this.cookTime,
-      this.fdImg,
-      this.fdIsToday,
-      this.fdIsQuick,
-      this.fdIsAvailable,
-      this.fdIsHide,
-      this.offer,
-      this.createdAt,
-      this.updatedAt);
+
+  Food({
+    required this.id,
+    required this.shopId,
+    required this.fdName,
+    required this.foodDescription,
+    required this.fdCategory,
+    required this.fdFullPrice,
+    required this.fdThreeBiTwoPrsPrice,
+    required this.fdHalfPrice,
+    required this.fdQtrPrice,
+    required this.fullPrsName,
+    required this.thrByToPrsName,
+    required this.halfPrsName,
+    required this.qtrPrsName,
+    required this.fdOffFullPrice,
+    required this.fdOffThreeByTwoPrice,
+    required this.fdOffHalfPrice,
+    required this.fdOffQtrPrice,
+    required this.offerName,
+    required this.fdIsLoos,
+    required this.cookTime,
+    required this.fdImg,
+    required this.fdIsToday,
+    required this.fdIsQuick,
+    required this.fdIsAvailable,
+    required this.fdIsHide,
+    required this.offer,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   // Copy constructor
   Food.copy(Food other)

@@ -19,7 +19,7 @@ class ColorCard extends StatelessWidget {
         onTap: () {
           colorPickerAlert(context: context,onColorSelect: (val){
             onColorSect(val);
-          });
+          }, initialColor: onColorSelection);
         },
         child: Container(
           decoration: BoxDecoration(

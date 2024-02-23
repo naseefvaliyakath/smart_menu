@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/simple/get_state.dart';
 import 'package:loading_icon_button/loading_icon_button.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:smart_menu/presentation/view/register_shop_page.dart';
 import 'package:smart_menu/presentation/widget/common/buttons/app_rount_mini_btn.dart';
 import 'package:smart_menu/presentation/widget/common/buttons/round_border_button.dart';
@@ -56,7 +57,7 @@ class LoginScreen extends StatelessWidget {
                                 width: 100,
                                 primaryColor: AppColors.mainColor,
                                 showBox: true,
-                                onPressed: () {
+                                onPressed: () async {
                                   FocusScope.of(context).unfocus();
                                   ctrl.login();
                                 },

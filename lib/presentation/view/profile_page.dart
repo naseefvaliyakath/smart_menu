@@ -4,91 +4,98 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:smart_menu/presentation/controller/login_controller.dart';
 import '../../constants/colors/app_colors.dart';
+import '../alert/single_txt_alert.dart';
+import '../widget/common/buttons/edit_name_btn.dart';
+import '../widget/info_tile.dart';
+import '../widget/profile_header.dart';
 
 class ProfilePage extends StatelessWidget {
-  final LoginController ctrl = Get.find<LoginController>();
-
   ProfilePage({
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile', style: TextStyle(fontSize: 24.sp, color: Colors.white)),
-        iconTheme: const IconThemeData(color: Colors.white),
-        centerTitle: true,
-        backgroundColor: AppColors.mainColor,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _headerSection(),
-            _infoSection(),
-          ],
+    return GetBuilder<LoginController>(builder: (ctrl) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Profile', style: TextStyle(fontSize: 24.sp, color: Colors.white)),
+          iconTheme: const IconThemeData(color: Colors.white),
+          centerTitle: true,
+          backgroundColor: AppColors.mainColor,
         ),
-      ),
-    );
-  }
-
-  Widget _headerSection() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.mainColor,
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(20.r)),
-      ),
-      padding: EdgeInsets.symmetric(vertical: 20.h),
-      child: Column(
-        children: [
-          CircleAvatar(
-            backgroundColor: AppColors.titleColor,
-            radius: 50,
-            child: ClipOval(
-              child: Image.asset(
-                'assets/image/user.png',
-                width: 100.sp,
-                height: 100.sp,
-                fit: BoxFit.cover,
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              ProfileHeader(
+                shopName: '${ctrl.myShop.shopName}',
+                onTap: () {
+                  singleTxtAlert(
+                      context: Get.context!,
+                      hintText: 'Enter New Name ....',
+                      title: 'Edit Shop Name',
+                      tCtrl: ctrl.shopNameEditController,
+                      formKey: ctrl.shopNameEditFormKey,
+                      onTap: () {
+                        ctrl.updateShopDetails('shopName');
+                      });
+                },
               ),
-            ),
+              Padding(
+                padding: EdgeInsets.all(10.sp),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    InfoTile(title:'Phone Number',value: '${ctrl.myShop.phoneNumber}', icon:Icons.phone,
+                        trailing: IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.black54),
+                          onPressed: () {
+                            singleTxtAlert(
+                              context: Get.context!,
+                              hintText: 'Enter Phone Number ....',
+                              title: 'Edit Phone Number',
+                              formKey: ctrl.shopPhoneEditFormKey,
+                              tCtrl: ctrl.shopPhoneEditController,
+                              usePhoneValidator: true,
+                              onTap: () {
+                                ctrl.updateShopDetails('phoneNumber');
+                              },
+                            );
+                          },
+                        )),
+                    InfoTile(title:'Email', value:'${ctrl.myShop.email}', icon:Icons.mail,
+                        trailing: IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.black54),
+                          onPressed: () {
+                            singleTxtAlert(
+                              context: Get.context!,
+                              hintText: 'Enter New Email ....',
+                              title: 'Edit Email',
+                              tCtrl: ctrl.shopEmailEditController,
+                              useEmailValidator: true,
+                              formKey: ctrl.shopEmailEditFormKey,
+                              onTap: () {
+                                ctrl.updateShopDetails('email');
+                              },
+                            );
+                          },
+                        )),
+                    InfoTile(title: 'App Status',value: '${ctrl.myShop.status}',icon: Icons.info_outline),
+                    InfoTile(title:'Expiry Date', value:formatDate('${ctrl.myShop.expiryDate}'), icon:Icons.date_range),
+                    InfoTile(title:'Your Plan', value:'${ctrl.myShop.plan} Plan',icon: Icons.play_circle_outline_sharp),
+                  ],
+                ),
+              ),
+            ],
           ),
-          SizedBox(height: 10.h),
-          Text(
-            '${ctrl.myShop.shopName}',
-            style: TextStyle(fontSize: 22.sp, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-        ],
-      ),
-    );
+        ),
+      );
+    });
   }
 
-  Widget _infoSection() {
-    return Padding(
-      padding: EdgeInsets.all(20.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _infoTile('Phone Number', '${ctrl.myShop.phoneNumber}', Icons.phone),
-          _infoTile('App Status', '${ctrl.myShop.status}', Icons.info_outline),
-          _infoTile('Expiry Date', formatDate('${ctrl.myShop.expiryDate}'), Icons.date_range),
-          _infoTile('Your Plan', '${ctrl.myShop.plan} Plan', Icons.play_circle_outline_sharp),
-        ],
-      ),
-    );
-  }
 
-  Widget _infoTile(String title, String value, IconData icon) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.blueGrey),
-      title: Text(title, style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w500)),
-      subtitle: Text(
-        value,
-        style: TextStyle(fontSize: 16.sp, color: Colors.grey.shade600),
-      ),
-    );
-  }
+
+
 
   String formatDate(String dateString) {
     DateTime dateTime = DateTime.parse(dateString);

@@ -10,93 +10,120 @@ import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:showcaseview/showcaseview.dart';
 import 'package:smart_menu/constants/colors/app_colors.dart';
-import 'package:smart_menu/core/routes/app_pages.dart';
-import 'package:smart_menu/presentation/view/setup_qr_stand/customize_qr_stand.dart';
 import 'package:smart_menu/presentation/view/setup_qr_stand/steps_for_qr_stand.dart';
 import 'package:smart_menu/presentation/widget/common/common_text/big_text.dart';
+import 'package:smart_menu/presentation/widget/common/show_case_widget.dart';
+import '../../constants/app_constant_names.dart';
+import '../controller/show_case_controller.dart';
 import '../widget/common/buttons/app_rount_mini_btn.dart';
 import '../widget/common/image_tile.dart';
 import '../widget/snack_bar.dart';
 
 class QRCodeTableStand extends StatelessWidget {
   final ScreenshotController screenshotController = ScreenshotController();
+  final GlobalKey showcaseQrCodeDesignCard = GlobalKey();
+  final GlobalKey showcaseQrCodeDownload = GlobalKey();
+  final GlobalKey showcaseQrCodeShare = GlobalKey();
 
   QRCodeTableStand({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const BigText(text: 'QR Code', color: Colors.black),
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            SizedBox(height: 30.h),
-            Screenshot(
-              controller: screenshotController,
-              child: Card(
-                elevation: 4.0,
-                surfaceTintColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      QrImageView(
-                        data: 'This is a simple QR code',
-                        version: QrVersions.auto,
-                        size: 320,
-                        gapless: false,
-                      ),
-                      10.verticalSpace,
-                      const Text(
-                        'SCAN FOR MENU',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                    ],
+    return ShowCaseWidget(onFinish: () {
+      //? after finish tour setting 'showcaseAddFoodPage' as false
+      Get.find<ShowcaseController>().setShowcase(KEY_SHOWCASE_QR_CODE_DEESIGN_PAGE_CARD);
+    }, builder: Builder(builder: (context) {
+      if (!Get.find<ShowcaseController>().showcaseQrCodeDesignPageCard) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ShowCaseWidget.of(context).startShowCase([showcaseQrCodeDownload,showcaseQrCodeShare,showcaseQrCodeDesignCard]);
+        });
+      }
+      return Scaffold(
+        appBar: AppBar(
+          title: const BigText(text: 'QR Code', color: Colors.black),
+          backgroundColor: Colors.white,
+          elevation: 0,
+        ),
+        body: Center(
+          child: Column(
+            children: [
+              SizedBox(height: 30.h),
+              Screenshot(
+                controller: screenshotController,
+                child: Card(
+                  elevation: 4.0,
+                  surfaceTintColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        QrImageView(
+                          data: 'This is a simple QR code',
+                          version: QrVersions.auto,
+                          size: 320,
+                          gapless: false,
+                        ),
+                        10.verticalSpace,
+                        const Text(
+                          'SCAN FOR MENU',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 20.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AppRoundMiniBtn(
-                    text: 'Download',
-                    onTap: () async {
-                      await captureAndSaveQrCode(context);
-                    },
-                    color: AppColors.mainColor),
-                SizedBox(width: 15.w),
-                AppRoundMiniBtn(
-                    text: 'Share QR',
-                    onTap: () async {
-                      await shareQrCode();
-                    },
-                    color: AppColors.mainColor),
-              ],
-            ),
-            10.verticalSpace,
-            ImageTile(
-              index: '',
-              imageUrl: 'assets/image/qr-stand.png',
-              title: 'Setup QR Code Stand',
-              subtitle: 'Click to learn how to setup QR code stand in 3 steps',
-              onTap: () {
-               // Get.toNamed(AppPages.CUSTOMIZE_QR_STAND_PAGE);
-                Get.to(StepsForQrStand());
-              },
-            ),
-          ],
+              SizedBox(height: 20.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  MyShowCase(
+                    showcaseKey: showcaseQrCodeDownload,
+                    description: 'Download QR Code',
+                    child: AppRoundMiniBtn(
+                        text: 'Download',
+                        onTap: () async {
+                          await captureAndSaveQrCode(context);
+                        },
+                        color: AppColors.mainColor),
+                  ),
+                  SizedBox(width: 15.w),
+                  MyShowCase(
+                    showcaseKey: showcaseQrCodeShare,
+                    description: 'Share QR Code To Customers',
+                    child: AppRoundMiniBtn(
+                        text: 'Share QR',
+                        onTap: () async {
+                          await shareQrCode();
+                        },
+                        color: AppColors.mainColor),
+                  ),
+                ],
+              ),
+              10.verticalSpace,
+              MyShowCase(
+                showcaseKey: showcaseQrCodeDesignCard,
+                description: 'Click To Setup QR Code Table Stand',
+                child: ImageTile(
+                  index: '',
+                  imageUrl: 'assets/image/qr-stand.png',
+                  title: 'Setup QR Code Stand',
+                  subtitle: 'Click to learn how to setup QR code stand in 3 steps',
+                  onTap: () {
+                    // Get.toNamed(AppPages.CUSTOMIZE_QR_STAND_PAGE);
+                    Get.to(StepsForQrStand());
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }));
   }
 
   shareQrCode() async {

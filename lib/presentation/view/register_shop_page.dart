@@ -22,7 +22,10 @@ class RegisterShopPage extends StatelessWidget {
     return GetBuilder<LoginController>(builder: (ctrl) {
       return Obx(() {
         return PopScope(
-          onPopInvoked: (pop)async {
+          onPopInvoked: (pop) async {
+            ctrl.btnController.reset();
+            ctrl.clearFormField();
+            ctrl.isFormSubmitted.value = false;
             Get.offNamed(AppPages.LOGIN_PAGE);
           },
           canPop: false,
@@ -31,6 +34,15 @@ class RegisterShopPage extends StatelessWidget {
               title: Text('Register Shop', style: TextStyle(color: Colors.black, fontSize: 24.sp)),
               backgroundColor: Colors.white,
               iconTheme: const IconThemeData(color: Colors.black),
+              leading: IconButton(
+                onPressed: () {
+                  ctrl.btnController.reset();
+                  ctrl.clearFormField();
+                  ctrl.isFormSubmitted.value = false;
+                  Get.offNamed(AppPages.LOGIN_PAGE);
+                },
+                icon: Icon(Icons.arrow_back_ios),
+              ),
             ),
             body: SingleChildScrollView(
               child: Padding(
@@ -52,7 +64,7 @@ class RegisterShopPage extends StatelessWidget {
                       const SmallText(text: ' NB :You Cannot Change Shop name Later'),
                       15.verticalSpace,
                       TextFieldWidget(
-                        hintText: 'Enter Phone 1 ...',
+                        hintText: 'Enter Phone  ...',
                         label: 'Phone 1',
                         textEditingController: ctrl.phone1Controller,
                         borderRadius: 8.r,
@@ -88,18 +100,18 @@ class RegisterShopPage extends StatelessWidget {
                         itemToString: (States item) => stateDescriptions[item] ?? '',
                       ),
                       15.verticalSpace,
-                      DropdownFilterWidget<District>(
-                        items: District.values,
-                        selectedItem: ctrl.selectedDistrict.value,
-                        isEnabled: !ctrl.isFormSubmitted.value,
-                        hint: 'Select District',
-                        onChanged: (District? value) {
-                          if (value != null) {
-                            ctrl.selectedDistrict.value = value;
-                          }
-                        },
-                        itemToString: (District item) => districtDescriptions[item] ?? '',
-                      ),
+                      // DropdownFilterWidget<District>(
+                      //   items: District.values,
+                      //   selectedItem: ctrl.selectedDistrict.value,
+                      //   isEnabled: !ctrl.isFormSubmitted.value,
+                      //   hint: 'Select District',
+                      //   onChanged: (District? value) {
+                      //     if (value != null) {
+                      //       ctrl.selectedDistrict.value = value;
+                      //     }
+                      //   },
+                      //   itemToString: (District item) => districtDescriptions[item] ?? '',
+                      // ),
                       15.verticalSpace,
                       Visibility(
                         visible: ctrl.isFormSubmitted.value,
@@ -108,11 +120,27 @@ class RegisterShopPage extends StatelessWidget {
                             const MidText(text: 'ENTER OTP'),
                             5.verticalSpace,
                             OTPTextFieldCard(
-                              otpController: OtpFieldControllerV2(),
+                              otpController: ctrl.otpController,
                               onChange: (otp) {
                                 ctrl.otp = otp;
                               },
                             ),
+                            5.verticalSpace,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                TextButton(
+                                    onPressed: () {
+                                      ctrl.initiateCreateShop(isResendOtp: true);
+                                    },
+                                    child: const Text('Resent OTP')),
+                                TextButton(
+                                    onPressed: () {
+                                      ctrl.initiateCreateShop(isResendOtp: true,otpType: 'call');
+                                    },
+                                    child: const Text('Call OTP')),
+                              ],
+                            )
                           ],
                         ),
                       ),

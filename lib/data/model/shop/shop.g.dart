@@ -7,23 +7,25 @@ part of 'shop.dart';
 // **************************************************************************
 
 Shop _$ShopFromJson(Map<String, dynamic> json) => Shop(
-      json['shopId'] as int?,
-      json['shopName'] as String?,
-      json['phoneNumber'] as String?,
-      json['state'] as String?,
-      json['district'] as String?,
-      json['plan'] as String?,
-      json['expiryDate'] as String?,
-      json['status'] as String?,
-      json['createdAt'] as String?,
-      json['updatedAt'] as String?,
-      json['token'] as String?,
+      shopId: json['shopId'] as int?,
+      shopName: json['shopName'] as String?,
+      phoneNumber: json['phoneNumber'] as String?,
+      email: json['email'] as String?,
+      state: json['state'] as String?,
+      district: json['district'] as String?,
+      plan: json['plan'] as String?,
+      expiryDate: json['expiryDate'] as String?,
+      status: json['status'] as String?,
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+      token: json['token'] as String?,
     );
 
 Map<String, dynamic> _$ShopToJson(Shop instance) => <String, dynamic>{
       'shopId': instance.shopId,
       'shopName': instance.shopName,
       'phoneNumber': instance.phoneNumber,
+      'email': instance.email,
       'state': instance.state,
       'district': instance.district,
       'plan': instance.plan,

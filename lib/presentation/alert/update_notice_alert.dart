@@ -12,6 +12,7 @@ void showNoticeUpdateAlert({
   required BuildContext context,
   required String type,
   required bool forced,
+   Function? onTap,
 }) {
   try {
     bool horizontal = 1.sh < 1.sw ? true : false;
@@ -37,7 +38,7 @@ void showNoticeUpdateAlert({
               onTap: () {
                 //? if type is notice then no need to any operation
                 if (type == 'notice') {
-                  Navigator.pop(context);
+                  onTap == null ? Navigator.pop(context) : onTap();
                 } else if (type == 'update') {
                   OpenStore.instance.open(
                     androidAppBundleId: 'com.qbillsoftware.app',

@@ -1,7 +1,9 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 import 'package:smart_menu/presentation/controller/login_controller.dart';
 import 'package:smart_menu/presentation/view/home_page.dart';
 import 'constants/colors/app_colors.dart';
@@ -18,7 +20,17 @@ Future<void> main() async {
   Get.put<ShopRepository>(ShopRepositoryImpl(Get.find()), permanent: true);
   Get.put<LoginController>(LoginController(), permanent: true);
   await Get.find<LoginController>().checkIsAuthenticated();
-  runApp(const MyApp());
+  if(kReleaseMode) {
+    await SentryFlutter.init(
+          (options) {
+        options.dsn = 'https://f5a9a1ed589d0d6d84ed397554b08fab@o4506451992313856.ingest.sentry.io/4506452006862848';
+        options.tracesSampleRate = 0.01;
+      },
+      appRunner: () => runApp(const MyApp()),
+    );
+  }else{
+    runApp(const MyApp());
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -40,9 +52,9 @@ class MyApp extends StatelessWidget {
               primaryColor: AppColors.mainColor,
               primarySwatch: Colors.amber,
             ),
-            initialRoute:isAuthenticated ? AppPages.HOME : AppPages.LOGIN_PAGE,
+            initialRoute: isAuthenticated ? AppPages.HOME : AppPages.LOGIN_PAGE,
             initialBinding: LoginBinding(),
-            unknownRoute: GetPage(name: '/notFount', page: () => const HomePage()),
+            unknownRoute: GetPage(name: '/notFount', page: () =>  HomePage()),
             defaultTransition: Transition.cupertino,
             getPages: AppPages.routes,
           );
@@ -51,10 +63,6 @@ class MyApp extends StatelessWidget {
 }
 
 // //flutter run --release
-
-
-
-
-
+//flutter pub run build_runner build --delete-conflicting-outputs
 
 

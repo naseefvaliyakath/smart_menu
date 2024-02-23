@@ -6,6 +6,7 @@ import 'package:smart_menu/presentation/controller/offer_page_controller.dart';
 import 'package:smart_menu/presentation/widget/common/common_text/mid_text.dart';
 import 'package:smart_menu/presentation/widget/common/common_text/small_text.dart';
 import '../../constants/colors/app_colors.dart';
+import '../../core/routes/app_pages.dart';
 import '../controller/create_offer_controller.dart';
 import '../widget/common/buttons/round_border_button.dart';
 import '../widget/common/common_text/big_text.dart';
@@ -208,12 +209,12 @@ class CreateOfferPage extends StatelessWidget {
                                 Center(
                                     child: ctrl.isLoading
                                         ? RoundBorderButton(
-                                            text: 'Add Food',
+                                            text: 'Set Offer',
                                             onTap: () {},
                                             isEnabled: false,
                                           )
                                         : RoundBorderButton(
-                                            text: 'Add Food',
+                                            text: 'Set Offer',
                                             textColor: Colors.white,
                                             width: 0.9.sw,
                                             borderRadius: 20.r,
@@ -231,7 +232,7 @@ class CreateOfferPage extends StatelessWidget {
                   ),
                 ),
               );
-      }), // This trailing comma makes auto-formatting nicer for build methods.
+      }),
     );
   }
 }

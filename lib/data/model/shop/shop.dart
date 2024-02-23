@@ -13,6 +13,9 @@ class Shop {
   @JsonKey(name: "phoneNumber")
   String? phoneNumber;
 
+  @JsonKey(name: "email")
+  String? email;
+
   @JsonKey(name: "state")
   String? state;
 
@@ -37,18 +40,20 @@ class Shop {
   @JsonKey(name: "updatedAt")
   String? updatedAt;
 
-  Shop(
-      this.shopId,
-      this.shopName,
-      this.phoneNumber,
-      this.state,
-      this.district,
-      this.plan,
-      this.expiryDate,
-      this.status,
-      this.createdAt,
-      this.updatedAt,
-      this.token);
+  Shop({
+    required this.shopId,
+    required this.shopName,
+    required this.phoneNumber,
+    required this.email,
+    required this.state,
+    required this.district,
+    required this.plan,
+    required this.expiryDate,
+    required this.status,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.token,
+  });
 
   factory Shop.fromJson(Map<String, dynamic> json) => _$ShopFromJson(json);
   Map<String, dynamic> toJson() => _$ShopToJson(this);

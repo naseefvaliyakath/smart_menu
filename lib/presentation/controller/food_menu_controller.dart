@@ -4,11 +4,15 @@ import 'package:smart_menu/data/model/food/food.dart';
 import '../../core/routes/app_pages.dart';
 import '../../data/model/api_response/api_response.dart';
 import '../../data/model/category/category.dart';
+import '../../data/network/handle_error.dart';
 import '../../domain/repository/network/contract/category_repository.dart';
 import '../../domain/repository/network/contract/food_repository.dart';
+import '../alert/renew_plan_alert.dart';
 import '../widget/snack_bar.dart';
 
 class FoodMenuController extends GetxController {
+  final GlobalKey showcaseFoodMenuFoodCard = GlobalKey();
+
   FoodRepository foodRepository = Get.find<FoodRepository>();
   CategoryRepository categoryRepository = Get.find<CategoryRepository>();
 
@@ -19,7 +23,7 @@ class FoodMenuController extends GetxController {
   int tappedIndex = 0;
 
   //? to get by selected category
-  int selectedCategory = -1;
+  int selectedCategory = -100;
 
   //? Category to show in UI
   final List<Category> _myCategory = [];
@@ -38,7 +42,7 @@ class FoodMenuController extends GetxController {
   @override
   void onInit() async {
     await getAllCategory();
-    await getAllFood(showSnack: false);
+    await getAllFood(showSnack: false,selectedCategoryIndex: -100); //? -100 for fetch all food
     super.onInit();
   }
 
@@ -70,14 +74,15 @@ class FoodMenuController extends GetxController {
         return false;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'food_menu_controller', method: 'getAllCategory');
+      return;
     } finally {
       hideLoadingCategoryLoading();
       update();
     }
   }
 
-  getAllFood({bool showSnack = true}) async {
+  getAllFood({bool showSnack = true ,int? selectedCategoryIndex}) async {
     try {
       ApiResponse<List<Food>>? apiResponse = await foodRepository.getAllFood();
       if (apiResponse != null) {
@@ -90,7 +95,7 @@ class FoodMenuController extends GetxController {
           _storedAllFoods.addAll(apiResponse.data ?? []);
           _myAllFoods.addAll(_storedAllFoods);
           showSnack == true ? AppSnackBar.successSnackBar('Success', apiResponse.message) : null;
-          filterFoods(selectedCategory);
+          filterFoods(selectedCategoryIndex ?? selectedCategory);
           return true;
         }
       } else {
@@ -98,7 +103,8 @@ class FoodMenuController extends GetxController {
         return false;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', e.toString());
+      ErrorHandler.handleError(e, isDioError: false, page: 'food_menu_controller', method: 'getAllFood');
+      return;
     } finally {
       update();
     }
@@ -119,6 +125,7 @@ class FoodMenuController extends GetxController {
       ApiResponse<Food>? apiResponse = await foodRepository.updateSelectedFields(foodToUpdate);
       if (apiResponse != null) {
         if (apiResponse.error) {
+          checkAndRenewPlanAlert(apiResponse.message);
           AppSnackBar.errorSnackBar('Error', apiResponse.message);
           return false;
         } else {
@@ -131,7 +138,8 @@ class FoodMenuController extends GetxController {
         return false;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+      ErrorHandler.handleError(e, isDioError: false, page: 'food_menu_controller', method: 'updateSelectedField');
+      return;
     } finally {
       update();
     }
@@ -153,6 +161,7 @@ class FoodMenuController extends GetxController {
           if (apiResponse.error) {
             AppSnackBar.errorSnackBar('Error', apiResponse.message);
             Navigator.pop(Get.context!);
+            checkAndRenewPlanAlert(apiResponse.message);
             return false;
           } else {
             AppSnackBar.successSnackBar('Success', apiResponse.message);
@@ -172,43 +181,51 @@ class FoodMenuController extends GetxController {
         );
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+      ErrorHandler.handleError(e, isDioError: false, page: 'food_menu_controller', method: 'setAndRemoveOffer');
+      return;
     } finally {
       update();
     }
   }
 
   void filterFoods(int category) {
-    List<Food> filteredFoods = [];
+    try {
+      List<Food> filteredFoods = [];
 
-    if (category < -99) {
-      switch (category) {
-        case -100: // All foods
-          filteredFoods = List.from(_storedAllFoods);
-          break;
-        case -200: // Special foods
-          filteredFoods = _storedAllFoods.where((food) => food.fdIsHide == 'true').toList();
-          break;
-        case -300: // Today's foods
-          filteredFoods = _storedAllFoods.where((food) => food.fdIsAvailable == 'true').toList();
-          _storedAllFoods.forEach((element) {});
-          break;
-        case -400: // Available foods
-          filteredFoods = _storedAllFoods.where((food) => food.fdIsQuick == 'true').toList();
-          break;
-        case -500: // Quick foods
-          filteredFoods = _storedAllFoods.where((food) => food.offer == 'true').toList();
-          break;
-        default:
-          filteredFoods = [];
-      }
-    } else {
-      // Categories from server
-      filteredFoods = _storedAllFoods.where((food) => food.fdCategory == category).toList();
+      if (category < -99) {
+            switch (category) {
+              case -100: // All foods
+                filteredFoods = List.from(_storedAllFoods);
+                break;
+              case -200: // fdIsToday
+                filteredFoods = _storedAllFoods.where((food) => food.fdIsToday == 'true').toList();
+                break;
+              case -300: // fdIsQuick
+                filteredFoods = _storedAllFoods.where((food) => food.fdIsQuick == 'true').toList();
+                for (var element in _storedAllFoods) {}
+                break;
+              case -400: // Available foods
+                filteredFoods = _storedAllFoods.where((food) => food.fdIsAvailable == 'true').toList();
+                break;
+              case -500: // offer
+                filteredFoods = _storedAllFoods.where((food) => food.offer == 'true').toList();
+                break;
+              default:
+                filteredFoods = [];
+            }
+          } else {
+            // Categories from server
+            filteredFoods = _storedAllFoods.where((food) => food.fdCategory == category).toList();
+          }
+      _myAllFoods.clear();
+      _myAllFoods.addAll(filteredFoods);
+    } catch (e) {
+      ErrorHandler.handleError(e, isDioError: false, page: 'food_menu_controller', method: 'filterFoods');
+      return;
+    } finally {
+      update();
     }
-    _myAllFoods.clear();
-    _myAllFoods.addAll(filteredFoods);
-    update();
+
   }
 
   //? to change tapped category
@@ -217,19 +234,19 @@ class FoodMenuController extends GetxController {
     if (val < 5) {
       switch (val) {
         case 0:
-          selectedCategory = -100;
+          selectedCategory = -100;  //All
           break;
         case 1:
-          selectedCategory = -200;
+          selectedCategory = -200;   //today
           break;
         case 2:
-          selectedCategory = -300;
+          selectedCategory = -300;   //quick
           break;
         case 3:
-          selectedCategory = -400;
+          selectedCategory = -400;   //available
           break;
         case 4:
-          selectedCategory = -500;
+          selectedCategory = -500;    //offer
           break;
       }
     } else {
@@ -272,7 +289,8 @@ class FoodMenuController extends GetxController {
         return false;
       }
     } catch (e) {
-      AppSnackBar.errorSnackBar('Error', 'Something went to  wrong !');
+      ErrorHandler.handleError(e, isDioError: false, page: 'food_menu_controller', method: 'deleteFood');
+      return;
     } finally {
       update();
     }

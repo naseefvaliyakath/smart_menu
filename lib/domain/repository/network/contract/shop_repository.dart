@@ -6,8 +6,9 @@ import '../../../../data/model/shop/shop.dart';
 
 abstract class ShopRepository {
   Future<ApiResponse<Shop>?> getShopById(int id);
+  Future<ApiResponse<Shop>?> updateShop(dynamic body);
   Future<ApiResponse<Shop>?> getShopByPhone(String phone);
-  Future<ApiResponse<Shop>?> initiateCreateShop(Shop shop);
+  Future<ApiResponse<Shop>?> initiateCreateShop(Shop shop,String otpType);
   Future<ApiResponse<Shop>?> verifyOTPAndCreateShop(Map<String,dynamic> otpData);
   Future<ApiResponse<AppUpdateModel>?>  getAppUpdate();
   Future<ApiResponse<List<ItemPurchaseModel>>?> getAllPurchaseItem();

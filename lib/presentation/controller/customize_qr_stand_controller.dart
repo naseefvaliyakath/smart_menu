@@ -17,6 +17,8 @@ import '../../data/model/api_response/api_response.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../data/network/handle_error.dart';
+
 class CustomizeQRStandController extends GetxController {
   ShopRepository shopRepository = Get.find<ShopRepository>();
 
@@ -42,28 +44,37 @@ class CustomizeQRStandController extends GetxController {
     super.onInit();
     loadSavedImage();
     readTextFromStorage();
-    getAllPurchaseItem();
     initialLogo = await loadAssetImageBytes('assets/image/food_logo.png');
+    getAllPurchaseItem();
   }
 
   Future<void> pickLogoImage() async {
-    XFile? pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      await saveImageLocally(pickedFile);
-      logoImage = pickedFile;
-      update(); // This will trigger UI update
+    try {
+      XFile? pickedFile = await imagePicker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+            await saveImageLocally(pickedFile);
+            logoImage = pickedFile;
+
+          }
+    } catch (e) {
+      ErrorHandler.handleError(e, isDioError: false, page: 'customize_qr_controller', method: 'pickLogoImage');
+      return;
+    } finally {
+      update();
     }
   }
 
   void changeRestaurantName() {
     restaurantName = shopNameCtrl.text;
     storage.write(key: KEY_QR_SETUP_HOTEL_NAME, value: restaurantName);
+    shopNameCtrl.clear();
     update();
   }
 
   void changeScanMeText() {
     scanMeText = scanTextCtrl.text;
     storage.write(key: KEY_QR_SETUP_SCAN_ME_TXT, value: scanMeText);
+    scanTextCtrl.clear();
     update();
   }
 
@@ -79,30 +90,55 @@ class CustomizeQRStandController extends GetxController {
 
   // Save the image to the app's local directory and store the path in Flutter Secure Storage
   Future<void> saveImageLocally(XFile imageFile) async {
-    final directory = await getApplicationDocumentsDirectory();
-    final path = directory.path;
-    final file = File('${path}/savedImage.png');
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final path = directory.path;
+      final file = File('${path}/savedImage.png');
 
-    await File(imageFile.path).copy(file.path);
+      await File(imageFile.path).copy(file.path);
 
-    await storage.write(key: 'savedImagePath', value: file.path);
+      await storage.write(key: 'savedImagePath', value: file.path);
+    } catch (e) {
+      ErrorHandler.handleError(e, isDioError: false, page: 'customize_qr_controller', method: 'saveImageLocally');
+      return;
+    }
   }
 
   // Load the saved image when the app starts
   Future<void> loadSavedImage() async {
-    final savedImagePath = await storage.read(key: 'savedImagePath');
-    if (savedImagePath != null) {
-      logoImage = XFile(savedImagePath);
-      update();
+    try {
+      final savedImagePath = await storage.read(key: 'savedImagePath');
+      if (savedImagePath != null) {
+            logoImage = XFile(savedImagePath);
+            update();
+          }
+    } catch (e) {
+      ErrorHandler.handleError(e, isDioError: false, page: 'customize_qr_controller', method: 'loadSavedImage');
+      return;
     }
   }
 
   readTextFromStorage() async {
-    String hotelName = await storage.read(key: KEY_QR_SETUP_HOTEL_NAME) ?? Get.find<LoginController>().myShop.shopName ?? 'Hello';
-    String scanMeTxtRead = await storage.read(key: KEY_QR_SETUP_SCAN_ME_TXT) ?? 'SCAN FOR MENU';
-    restaurantName = hotelName;
-    scanMeText = scanMeTxtRead;
-    update();
+    try {
+      String? hotelName = await storage.read(key: KEY_QR_SETUP_HOTEL_NAME);
+      if (hotelName == null || hotelName.isEmpty) {
+            hotelName = Get.find<LoginController>().myShop.shopName ?? 'Hello';
+          }
+
+      String scanMeTxtRead = await storage.read(key: KEY_QR_SETUP_SCAN_ME_TXT) ?? 'SCAN FOR MENU';
+      if (scanMeTxtRead.isEmpty) {
+            scanMeTxtRead = 'SCAN FOR MENU';
+          }
+
+      restaurantName = hotelName;
+      scanMeText = scanMeTxtRead;
+    } catch (e) {
+      ErrorHandler.handleError(e, isDioError: false, page: 'customize_qr_controller', method: 'readTextFromStorage');
+      return;
+    } finally {
+      update();
+    }
+
   }
 
   getAllPurchaseItem() async {
@@ -120,36 +156,41 @@ class CustomizeQRStandController extends GetxController {
         return false;
       }
     } catch (e) {
-      return e;
+      ErrorHandler.handleError(e, isDioError: false, page: 'customize_qr_controller', method: 'getAllPurchaseItem');
+      return;
     } finally {
       update();
     }
   }
 
   Future<void> generatePdf() async {
-    final pdf = pw.Document();
-
-    // Add page with two A6 designs rotated and placed vertically
-    pdf.addPage(
-      pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        build: (pw.Context context) {
-          return pw.Column(
-            mainAxisAlignment: pw.MainAxisAlignment.center,
-            children: [
-              _buildQrDesign(),
-            ],
+    try {
+      final pdf = pw.Document();
+      //? Add page with two A6 designs rotated and placed vertically
+      pdf.addPage(
+            pw.Page(
+              pageFormat: PdfPageFormat.a4,
+              build: (pw.Context context) {
+                return pw.Column(
+                  mainAxisAlignment: pw.MainAxisAlignment.center,
+                  children: [
+                    _buildQrDesign(),
+                  ],
+                );
+              },
+            ),
           );
-        },
-      ),
-    );
 
-    // Save and share the PDF file
-    final output = await getApplicationDocumentsDirectory();
-    final file = File("${output.path}/qr_stands.pdf");
-    await file.writeAsBytes(await pdf.save());
-    final xFileImage = XFile(file.path);
-    await Share.shareXFiles([xFileImage]);
+      // Save and share the PDF file
+      final output = await getApplicationDocumentsDirectory();
+      final file = File("${output.path}/qr_stands.pdf");
+      await file.writeAsBytes(await pdf.save());
+      final xFileImage = XFile(file.path);
+      await Share.shareXFiles([xFileImage]);
+    } catch (e) {
+      ErrorHandler.handleError(e, isDioError: false, page: 'customize_qr_controller', method: 'generatePdf');
+      return;
+    }
   }
 
   pw.Widget _buildQrDesign() {
@@ -175,12 +216,12 @@ class CustomizeQRStandController extends GetxController {
             pw.ClipOval(
               child: logoImage != null
                   ? pw.Image(
-                pw.MemoryImage(
-                  File(logoImage!.path).readAsBytesSync(),
-                ),
-                width: 120,
-                height: 120,
-              )
+                      pw.MemoryImage(
+                        File(logoImage!.path).readAsBytesSync(),
+                      ),
+                      width: 120,
+                      height: 120,
+                    )
                   : pw.Image(pw.MemoryImage(initialLogo!), width: 120, height: 120), // Default logo
             ),
             pw.SizedBox(height: 10),

@@ -8,13 +8,13 @@ import 'package:smart_menu/presentation/view/create_offer_page.dart';
 import 'package:smart_menu/presentation/view/payment_modes_page.dart';
 import 'package:smart_menu/presentation/view/setup_qr_stand/customize_qr_stand.dart';
 import 'package:smart_menu/presentation/view/offer_page.dart';
-import 'package:smart_menu/presentation/view/setup_qr_stand/paper_purchase_page.dart';
 import 'package:smart_menu/presentation/view/setup_qr_stand/stand_purchase_page.dart';
 import 'package:smart_menu/presentation/view/web_menu_page.dart';
 import '../../presentation/view/food_menu_page.dart';
 import '../../presentation/view/home_page.dart';
 import '../../presentation/view/login_screen.dart';
 import '../../presentation/view/qr_code_screen.dart';
+import '../../presentation/view/setup_qr_stand/finalize_qr_stand_page.dart';
 import '../binding/add_food_binding.dart';
 import '../binding/food_menu_binding.dart';
 import '../binding/home_binding.dart';
@@ -31,14 +31,14 @@ class AppPages {
   static const QR_CODE_PAGE = '/qr-code-page';
   static const CUSTOMIZE_QR_STAND_PAGE = '/customize-qr-stand-page';
   static const STAND_PURCHASE_PAGE = '/stand-purchase-page';
-  static const PAPER_PURCHASE_PAGE = '/paper-purchase-page';
+  static const FINALIZE_QR_STAND_PAGE = '/paper-purchase-page';
   static const WEB_MENU_PAGE = '/web-menu-page';
   static const PAYMENT_MODE_PAGE = '/payment-mode-page';
 
   static final routes = [
     GetPage(
       name: HOME,
-      page: () => const HomePage(),
+      page: () =>  HomePage(),
       binding: HomeBinding(),
     ),
     GetPage(
@@ -62,7 +62,7 @@ class AppPages {
     GetPage(
         name: OFFER_PAGE,
         page: () {
-          return const OfferPage();
+          return  OfferPage();
         },
         binding: OfferPageBinding()),
     GetPage(
@@ -90,15 +90,15 @@ class AppPages {
         },
         binding: CustomizeQrStandBinding()),
     GetPage(
-        name: PAPER_PURCHASE_PAGE,
+        name: FINALIZE_QR_STAND_PAGE,
         page: () {
-          return   PaperPurchasePage();
+          return   const FinalizeQrStandPage();
         },
         binding: CustomizeQrStandBinding()),
     GetPage(
         name: WEB_MENU_PAGE,
         page: () {
-          return   WebMenuPage();
+          return   const WebMenuPage();
         },
         binding: WebMenuBinding()),
     GetPage(

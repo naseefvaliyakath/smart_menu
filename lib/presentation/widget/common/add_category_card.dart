@@ -6,11 +6,13 @@ class AddCategoryCard extends StatelessWidget {
 
 final Function onTap;
 
+
   const AddCategoryCard({Key? key, required this.onTap}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      key: key,
       onTap: ()=>onTap(),
       child: Card(
         color: Colors.white,
